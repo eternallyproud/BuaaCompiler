@@ -1,10 +1,12 @@
+import error.ErrorHandler;
+import frontend.Lexer;
 import utils.InOut;
-
 
 public class Compiler {
     public static void main(String[] args) {
-        // 测试读写文件
-        String fileContent = InOut.readFile();
-        InOut.writeFile(fileContent);
+        Lexer lexer = new Lexer(InOut.readTestfile());
+        lexer.doLexerAnalysis();
+        lexer.writeTokens();
+        ErrorHandler.ERROR_HANDLER.writeErrors();
     }
 }
