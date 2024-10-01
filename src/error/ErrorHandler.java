@@ -4,6 +4,7 @@ import utils.InOut;
 import utils.Tools;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class ErrorHandler {
     public static final ErrorHandler ERROR_HANDLER = new ErrorHandler();
@@ -19,8 +20,13 @@ public class ErrorHandler {
     }
 
     public void writeErrors() {
+        sortErrors();
         if (!errorList.isEmpty()) {
             InOut.writeError(Tools.arrayListToString(errorList));
         }
+    }
+
+    private void sortErrors() {
+        errorList.sort(Comparator.comparingInt(Error::getLine));
     }
 }

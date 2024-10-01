@@ -7,4 +7,6 @@ public class Configuration {
     public static String ERROR_PATH = "error.txt";
     // 词法分析结果输出路径
     public static String LEXER_RESULT_PATH = "lexer.txt";
+    // 语法分析结果输出路径
+    public static String PARSER_RESULT_PATH = "parser.txt";
 }

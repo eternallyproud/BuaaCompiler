@@ -45,4 +45,8 @@ public class InOut {
     public static void writeLexerResult(String content) {
         writeFile(Configuration.LEXER_RESULT_PATH, content);
     }
+
+    public static void writeParserResult(String content) {
+        writeFile(Configuration.PARSER_RESULT_PATH, content);
+    }
 }

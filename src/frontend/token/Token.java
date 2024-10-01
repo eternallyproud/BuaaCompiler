@@ -60,6 +60,10 @@ public class Token {
         this.line = line;
     }
 
+    public int getLine() {
+        return line;
+    }
+
     public TokenType getType() {
         return type;
     }
@@ -86,6 +90,6 @@ public class Token {
 
     @Override
     public String toString() {
-        return type + " " + content;
+        return type + " " + content + "\n";
     }
 }

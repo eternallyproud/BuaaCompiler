@@ -19,6 +19,6 @@ public class Error {
 
     @Override
     public String toString() {
-        return line + " " + errorType;
+        return line + " " + errorType + "\n";
     }
 }

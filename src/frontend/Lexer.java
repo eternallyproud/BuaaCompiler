@@ -24,6 +24,10 @@ public class Lexer {
         this.tokenList = new ArrayList<>();
     }
 
+    public ArrayList<Token> getTokenList() {
+        return tokenList;
+    }
+
     public void doLexerAnalysis() {
         Tools.printStartMessage("词法分析");
         while (pos < sourceCode.length()) {
@@ -150,30 +154,27 @@ public class Lexer {
         char ch = sourceCode.charAt(pos);
         StringBuilder sb = new StringBuilder().append(ch);
         switch (ch) {
-            case '&':
-            case '|':
+            case '&', '|' -> {
                 if (pos + 1 < sourceCode.length() && sourceCode.charAt(pos + 1) == ch) {
                     sb.append(ch);
                     pos++;
                 }
-                break;
-            case '<':
-            case '>':
-            case '=':
-            case '!':
+            }
+            case '<', '>', '=', '!' -> {
                 if (pos + 1 < sourceCode.length() && sourceCode.charAt(pos + 1) == '=') {
                     sb.append('=');
                     pos++;
                 }
-                break;
-            default:
+            }
+            default -> {
+            }
         }
         pos++;
         String symbol = sb.toString();
         return new Token(symbol, Token.symbolToTokenType(symbol), line);
     }
 
-    // Error: a
+    //Error: a
     public void handleInvalidTokenError(Token token) {
         ErrorHandler.ERROR_HANDLER.addError(new Error(line, ErrorType.INVALID_TOKEN_ERROR));
         if (token.getContent().equals("&")) {

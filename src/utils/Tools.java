@@ -31,6 +31,28 @@ public class Tools {
     }
 
     public static String arrayListToString(ArrayList<?> list) {
-        return arrayListToString(list, "\n");
+        return arrayListToString(list, "");
     }
+
+    public static String twoArrayListToString(ArrayList<?> list1, ArrayList<?> list2) {
+        // 如果列表为空，返回空字符串
+        if (list1 == null || list1.isEmpty()) {
+            return "";
+        }
+
+        // 使用 StringBuilder 进行拼接
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < list1.size(); i++) {
+            sb.append(list1.get(i));
+            if (i < list2.size()) {
+                sb.append(list2.get(i));
+            }
+        }
+
+        return sb.toString();
+
+    }
+
+
 }
