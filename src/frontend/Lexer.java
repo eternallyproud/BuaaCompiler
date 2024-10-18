@@ -112,16 +112,9 @@ public class Lexer {
             if (sourceCode.charAt(pos) == '\"') {
                 pos++;
                 break;
-            } else if (sourceCode.charAt(pos) == '\\') {
-                if (pos + 2 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\\' && sourceCode.charAt(pos + 2) == '\"') {
-                    pos += 3;
-                    sb.append("\\\"");
-                    break;
-                }
-                if (pos + 1 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\"') {
-                    pos++;
-                    sb.append(sourceCode.charAt(pos));
-                }
+            } else if (sourceCode.charAt(pos) == '\\' && pos + 1 < sourceCode.length()) {
+                pos++;
+                sb.append(sourceCode.charAt(pos));
             }
         }
         return new Token(sb.toString(), TokenType.STRCON, line);
@@ -134,16 +127,9 @@ public class Lexer {
             if (sourceCode.charAt(pos) == '\'') {
                 pos++;
                 break;
-            } else if (sourceCode.charAt(pos) == '\\') {
-                if (pos + 2 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\\' && sourceCode.charAt(pos + 2) == '\'') {
-                    pos += 3;
-                    sb.append("\\'");
-                    break;
-                }
-                if (pos + 1 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\'') {
-                    pos++;
-                    sb.append(sourceCode.charAt(pos));
-                }
+            } else if (sourceCode.charAt(pos) == '\\' && pos + 1 < sourceCode.length()) {
+                pos++;
+                sb.append(sourceCode.charAt(pos));
             }
         }
         return new Token(sb.toString(), TokenType.CHRCON, line);
