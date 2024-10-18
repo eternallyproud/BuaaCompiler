@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
 import frontend.token.Token;
 
 //<Number> ::= <IntConst>
@@ -9,6 +10,10 @@ public class NumberNode extends Node {
     public NumberNode(Token intConstToken) {
         super(NodeType.NUMBER);
         this.intConstToken = intConstToken;
+    }
+
+    public DataType getDataType() {
+        return DataType.INT;
     }
 
     @Override

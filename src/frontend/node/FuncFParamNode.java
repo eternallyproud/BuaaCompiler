@@ -1,5 +1,10 @@
 package frontend.node;
 
+import frontend.symbol.CharArraySymbol;
+import frontend.symbol.CharSymbol;
+import frontend.symbol.IntArraySymbol;
+import frontend.symbol.IntSymbol;
+import frontend.symbol.NumericalSymbol;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -17,6 +22,20 @@ public class FuncFParamNode extends Node {
         this.identToken = identToken;
         this.lbrackToken = lbrackToken;
         this.rbrackToken = rbrackToken;
+    }
+
+    public NumericalSymbol getSymbol() {
+        return switch (lbrackToken == null ? bTypeNode.getBType() : bTypeNode.getBType().getRaisedDataType()) {
+            case CHAR -> new CharSymbol(identToken.getContent());
+            case INT -> new IntSymbol(identToken.getContent());
+            case CHAR_ARRAY -> new CharArraySymbol(identToken.getContent());
+            case INT_ARRAY -> new IntArraySymbol(identToken.getContent());
+            default -> null;
+        };
+    }
+
+    public Token getIdentToken(){
+        return identToken;
     }
 
     @Override

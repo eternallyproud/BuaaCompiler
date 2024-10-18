@@ -18,6 +18,19 @@ public class EqExpNode extends Node {
     }
 
     @Override
+    public void checkSemantic() {
+        //<RelExp>
+        if (eqExpNode==null){
+            relExpNode.checkSemantic();
+        }
+        //<EqExp> ('==' | '!=') <RelExp>
+        else {
+            eqExpNode.checkSemantic();
+            relExpNode.checkSemantic();
+        }
+    }
+
+    @Override
     public String toString() {
         return Objects.toString(eqExpNode, "") +
                 Objects.toString(eqToken, "") + relExpNode + nodeType;

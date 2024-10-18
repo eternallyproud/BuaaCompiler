@@ -1,5 +1,7 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
+import frontend.symbol.SymbolTable;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -12,6 +14,7 @@ public class ConstDefNode extends Node {
     private final Token rbrackToken;
     private final Token assignToken;
     private final ConstInitValNode constInitValNode;
+    private DataType bType;
 
     public ConstDefNode(Token identToken, Token lbrackToken, ConstExpNode constExpNode, Token rbrackToken, Token assignToken, ConstInitValNode constInitValNode) {
         super(NodeType.CONST_DEF);
@@ -21,6 +24,19 @@ public class ConstDefNode extends Node {
         this.rbrackToken = rbrackToken;
         this.assignToken = assignToken;
         this.constInitValNode = constInitValNode;
+    }
+
+    public void setBType(DataType bType) {
+        this.bType = lbrackToken == null ? bType : bType.getRaisedDataType();
+    }
+
+    @Override
+    public void checkSemantic() {
+        if (constExpNode != null) {
+            constExpNode.checkSemantic();
+        }
+        constInitValNode.checkSemantic();
+        SymbolTable.SYMBOL_TABLE.tackle(identToken, bType);
     }
 
     @Override

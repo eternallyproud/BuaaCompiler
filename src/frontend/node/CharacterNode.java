@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
 import frontend.token.Token;
 
 //<Character> ::= <CharConst>
@@ -9,6 +10,10 @@ public class CharacterNode extends Node {
     public CharacterNode(Token charConstToken) {
         super(NodeType.CHARACTER);
         this.charConstToken = charConstToken;
+    }
+
+    public DataType getDataType() {
+        return DataType.CHAR.getCharToInt();
     }
 
     @Override

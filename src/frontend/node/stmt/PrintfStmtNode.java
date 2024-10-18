@@ -1,5 +1,8 @@
 package frontend.node.stmt;
 
+import error.Error;
+import error.ErrorHandler;
+import error.ErrorType;
 import frontend.node.ExpNode;
 import frontend.token.Token;
 import utils.Tools;
@@ -24,6 +27,21 @@ public class PrintfStmtNode extends StmtNode {
         this.expNodes = expNodes;
         this.rparenToken = rparenToken;
         this.semicnToken = semicnToken;
+    }
+
+    @Override
+    public void checkSemantic() {
+        for (ExpNode expNode : expNodes) {
+            expNode.checkSemantic();
+        }
+        if (getFormatPlaceholderNum() != expNodes.size()) {
+            ErrorHandler.ERROR_HANDLER.addError(new Error(strconToken.getLine(), ErrorType.MISMATCHED_PRINTF_FORMAT_ERROR));
+        }
+    }
+
+    private int getFormatPlaceholderNum() {
+        return Tools.findSubstringOccurrences(strconToken.getContent(), "%d") +
+                Tools.findSubstringOccurrences(strconToken.getContent(), "%c");
     }
 
     @Override

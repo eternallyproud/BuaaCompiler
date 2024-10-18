@@ -23,6 +23,14 @@ public class ConstDeclNode extends Node {
     }
 
     @Override
+    public void checkSemantic() {
+        for (ConstDefNode constDefNode : constDefNodes) {
+            constDefNode.setBType(bTypeNode.getBType().getConstantDataType());
+            constDefNode.checkSemantic();
+        }
+    }
+
+    @Override
     public String toString() {
         return "" + constToken + bTypeNode + Tools.twoArrayListToString(constDefNodes, commaTokens) + semicnToken + nodeType;
     }

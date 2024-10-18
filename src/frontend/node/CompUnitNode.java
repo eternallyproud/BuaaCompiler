@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.symbol.SymbolTable;
 import utils.Tools;
 
 import java.util.ArrayList;
@@ -15,6 +16,19 @@ public class CompUnitNode extends Node {
         this.declNodes = declNodes;
         this.funcDefNodes = funcDefNodes;
         this.mainFuncDefNode = mainFuncDefNode;
+    }
+
+    @Override
+    public void checkSemantic() {
+        SymbolTable.SYMBOL_TABLE.addScope();
+        for (DeclNode declNode : declNodes) {
+            declNode.checkSemantic();
+        }
+        for (FuncDefNode funcDefNode : funcDefNodes) {
+            funcDefNode.checkSemantic();
+        }
+        mainFuncDefNode.checkSemantic();
+        SymbolTable.SYMBOL_TABLE.removeScope();
     }
 
     @Override

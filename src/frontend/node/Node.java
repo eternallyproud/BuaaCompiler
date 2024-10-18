@@ -1,6 +1,6 @@
 package frontend.node;
 
-public class Node {
+public abstract class Node {
     protected final NodeType nodeType;
 
     public Node(NodeType nodeType) {
@@ -11,4 +11,6 @@ public class Node {
         return nodeType;
     }
 
+    public void checkSemantic() {
+    }
 }

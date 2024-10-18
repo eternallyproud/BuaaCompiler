@@ -17,6 +17,18 @@ public class LOrExpNode extends Node {
         this.landExpNode = landExpNode;
     }
 
+    public void checkSemantic() {
+        //<LAndExp>
+        if (lorExpNode == null) {
+            landExpNode.checkSemantic();
+        }
+        //<LOrExp> '||' <LAndExp>
+        else {
+            lorExpNode.checkSemantic();
+            landExpNode.checkSemantic();
+        }
+    }
+
     @Override
     public String toString() {
         return Objects.toString(lorExpNode, "") +

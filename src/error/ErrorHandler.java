@@ -16,7 +16,9 @@ public class ErrorHandler {
 
     public void addError(Error error) {
         System.out.println("第 " + error.getLine() + " 行出现错误: " + error.getErrorType().name());
-        errorList.add(error);
+        if (error.getErrorType() != ErrorType.UNEXPECTED_ERROR) {
+            errorList.add(error);
+        }
     }
 
     public void writeErrors() {
@@ -28,5 +30,9 @@ public class ErrorHandler {
 
     private void sortErrors() {
         errorList.sort(Comparator.comparingInt(Error::getLine));
+    }
+
+    public boolean isEmpty() {
+        return errorList.isEmpty();
     }
 }

@@ -33,6 +33,10 @@ public class Parser {
         nextToken();
     }
 
+    public CompUnitNode getCompUnitNode() {
+        return compUnitNode;
+    }
+
     public void writeCompUnitNode() {
         InOut.writeParserResult(compUnitNode.toString());
     }

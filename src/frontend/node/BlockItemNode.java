@@ -1,6 +1,8 @@
 package frontend.node;
 
+import frontend.node.stmt.ReturnStmtNode;
 import frontend.node.stmt.StmtNode;
+import frontend.token.Token;
 
 import java.util.Objects;
 
@@ -13,6 +15,32 @@ public class BlockItemNode extends Node {
         super(NodeType.BLOCK_ITEM);
         this.declNode = declNode;
         this.stmtNode = stmtNode;
+    }
+
+    public void checkReturnVoid() {
+        if (stmtNode != null) {
+            stmtNode.checkReturnVoid();
+        }
+    }
+
+    public boolean isReturnStmtNode() {
+        return stmtNode != null && stmtNode instanceof ReturnStmtNode;
+    }
+
+    public Token getReturnToken() {
+        return ((ReturnStmtNode) stmtNode).getReturnToken();
+    }
+
+    @Override
+    public void checkSemantic() {
+        //<Decl>
+        if (declNode != null) {
+            declNode.checkSemantic();
+        }
+        //<Stmt>
+        else {
+            stmtNode.checkSemantic();
+        }
     }
 
     @Override

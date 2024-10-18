@@ -8,6 +8,9 @@ public class StmtNode extends Node {
         super(NodeType.STMT);
     }
 
+    public void checkReturnVoid(){
+    }
+
     @Override
     public String toString() {
         return nodeType.toString();

@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -21,6 +22,45 @@ public class PrimaryExpNode extends Node {
         this.lvalNode = lvalNode;
         this.numberNode = numberNode;
         this.characterNode = characterNode;
+    }
+
+    public DataType getDataType() {
+        //'(' <Exp> ')'
+        if (lparenToken != null) {
+            return expNode.getDataType();
+        }
+        //<LVal>
+        else if (lvalNode != null) {
+            return lvalNode.getDataType();
+        }
+        //<Number>
+        else if (numberNode != null) {
+            return numberNode.getDataType();
+        }
+        //<Character>
+        else {
+            return characterNode.getDataType();
+        }
+    }
+
+    @Override
+    public void checkSemantic() {
+        //'(' <Exp> ')'
+        if (lparenToken != null) {
+            expNode.checkSemantic();
+        }
+        //<LVal>
+        else if (lvalNode != null) {
+            lvalNode.checkSemantic();
+        }
+        //<Number>
+        else if (numberNode != null) {
+            numberNode.checkSemantic();
+        }
+        //<Character>
+        else {
+            characterNode.checkSemantic();
+        }
     }
 
     @Override

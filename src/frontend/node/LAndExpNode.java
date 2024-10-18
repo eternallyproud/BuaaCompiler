@@ -18,6 +18,19 @@ public class LAndExpNode extends Node {
     }
 
     @Override
+    public void checkSemantic(){
+        //<EqExp>
+        if (landExpNode == null) {
+            eqExpNode.checkSemantic();
+        }
+        //<LAndExp> '&&' <EqExp>
+        else {
+            landExpNode.checkSemantic();
+            eqExpNode.checkSemantic();
+        }
+    }
+
+    @Override
     public String toString() {
         return Objects.toString(landExpNode, "") +
                 Objects.toString(andToken, "") + eqExpNode + nodeType;

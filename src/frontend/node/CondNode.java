@@ -10,6 +10,11 @@ public class CondNode extends Node {
     }
 
     @Override
+    public void checkSemantic(){
+        lOrExpNode.checkSemantic();
+    }
+
+    @Override
     public String toString() {
         return "" + lOrExpNode + nodeType;
     }

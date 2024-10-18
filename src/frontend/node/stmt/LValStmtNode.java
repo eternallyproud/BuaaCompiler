@@ -6,8 +6,8 @@ import frontend.token.Token;
 
 import java.util.Objects;
 
-//<Stmt> ::= <LVal> '=' <LVal> '=' 'getint' '(' ')' ';' | <LVal> '=' 'getchar' '(' ')' | <Exp> ';'
-public class LValStmtNode extends StmtNode{
+//<Stmt> ::= <LVal> '=' <Exp> ';' | <LVal> '=' 'getint' '(' ')' ';' | <LVal> '=' 'getchar' '(' ')' ';'
+public class LValStmtNode extends StmtNode {
     private final LValNode lValNode;
     private final Token assignToken;
     private final Token getintToken;
@@ -26,6 +26,15 @@ public class LValStmtNode extends StmtNode{
         this.rparenToken = rparenToken;
         this.expNode = expNode;
         this.semicnToken = semicnToken;
+    }
+
+    @Override
+    public void checkSemantic() {
+        lValNode.checkSemantic();
+        lValNode.tryAssignTo();
+        if (expNode != null) {
+            expNode.checkSemantic();
+        }
     }
 
     @Override

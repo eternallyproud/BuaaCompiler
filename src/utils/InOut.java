@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 
 public class InOut {
     // 读取文件内容
-    private static String readTestfile(String filePath) {
+    public static String readFile(String filePath) {
         System.out.println("\n开始读入: " + filePath);
         try {
             byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
@@ -24,7 +24,7 @@ public class InOut {
     }
 
     public static String readTestfile() {
-        return readTestfile(Configuration.TESTFILE_PATH);
+        return readFile(Configuration.TESTFILE_PATH);
     }
 
     // 写入内容到文件
@@ -48,5 +48,9 @@ public class InOut {
 
     public static void writeParserResult(String content) {
         writeFile(Configuration.PARSER_RESULT_PATH, content);
+    }
+
+    public static void writeSemanticResult(String content) {
+        writeFile(Configuration.SEMANTIC_RESULT_PATH, content);
     }
 }

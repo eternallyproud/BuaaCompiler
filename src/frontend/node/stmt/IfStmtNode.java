@@ -26,6 +26,25 @@ public class IfStmtNode extends StmtNode {
     }
 
     @Override
+    public void checkReturnVoid() {
+        ifstmtNode.checkReturnVoid();
+        if (elseStmtNode != null) {
+            elseStmtNode.checkReturnVoid();
+        }
+    }
+
+    @Override
+    public void checkSemantic() {
+        if (condNode != null) {
+            condNode.checkSemantic();
+        }
+        ifstmtNode.checkSemantic();
+        if (elseStmtNode != null) {
+            elseStmtNode.checkSemantic();
+        }
+    }
+
+    @Override
     public String toString() {
         return "" + ifToken + lparenToken + condNode + rparenToken + ifstmtNode +
                 Objects.toString(elseToken, "") +

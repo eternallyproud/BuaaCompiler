@@ -26,6 +26,21 @@ public class ConstInitValNode extends Node {
     }
 
     @Override
+    public void checkSemantic(){
+        //<ConstExp>
+        if (constExpNode != null) {
+            constExpNode.checkSemantic();
+        }
+        //'{' [ <ConstExp> { ',' <ConstExp> } ] '}'
+        else if (lbraceToken != null) {
+            for (ConstExpNode constExpNode : constExpNodes) {
+                constExpNode.checkSemantic();
+            }
+        }
+        //<StringConst>
+    }
+
+    @Override
     public String toString() {
         return Objects.toString(constExpNode, "") +
                 Objects.toString(lbraceToken, "") +

@@ -26,6 +26,20 @@ public class InitValNode extends Node {
     }
 
     @Override
+    public void checkSemantic(){
+        //<Exp>
+        if(expNode != null){
+            expNode.checkSemantic();
+        }
+        //'{' [ <Exp> { ',' <Exp> } ] '}'
+        else if (lbraceToken != null){
+            for (ExpNode expNode : expNodes)
+                expNode.checkSemantic();
+        }
+        //<StringConst>
+    }
+
+    @Override
     public String toString() {
         return Objects.toString(expNode, "") +
                 Objects.toString(lbraceToken, "") +

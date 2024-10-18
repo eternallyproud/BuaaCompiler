@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -15,6 +16,20 @@ public class AddExpNode extends Node {
         this.addExpNode = addExpNode;
         this.addToken = addToken;
         this.mulExpNode = mulExpNode;
+    }
+
+    public DataType getDataType(){
+        return mulExpNode.getDataType();
+    }
+
+    @Override
+    public void checkSemantic() {
+        if(addExpNode == null){
+            mulExpNode.checkSemantic();
+        }else{
+            addExpNode.checkSemantic();
+            mulExpNode.checkSemantic();
+        }
     }
 
     @Override

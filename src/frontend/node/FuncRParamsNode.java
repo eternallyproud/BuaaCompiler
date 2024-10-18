@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
 import frontend.token.Token;
 import utils.Tools;
 
@@ -14,6 +15,21 @@ public class FuncRParamsNode extends Node {
         super(NodeType.FUNC_R_PARAMS);
         this.expNodes = expNodes;
         this.commaTokens = commaTokens;
+    }
+
+    public ArrayList<DataType> getParameterDataTypes() {
+        ArrayList<DataType> parameterDataTypes = new ArrayList<>();
+        for (ExpNode expNode : expNodes) {
+            parameterDataTypes.add(expNode.getDataType());
+        }
+        return parameterDataTypes;
+    }
+
+    @Override
+    public void checkSemantic() {
+        for (ExpNode expNode : expNodes) {
+            expNode.checkSemantic();
+        }
     }
 
     @Override

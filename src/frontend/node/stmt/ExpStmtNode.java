@@ -16,6 +16,13 @@ public class ExpStmtNode extends StmtNode {
     }
 
     @Override
+    public void checkSemantic() {
+        if (expNode != null) {
+            expNode.checkSemantic();
+        }
+    }
+
+    @Override
     public String toString() {
         return Objects.toString(expNode, "") +
                 semicnToken + super.toString();

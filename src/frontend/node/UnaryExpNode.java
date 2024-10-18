@@ -1,7 +1,10 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
+import frontend.symbol.SymbolTable;
 import frontend.token.Token;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 //<UnaryExp> ::= <PrimaryExp> | <Ident> '(' [ <FuncRParams> ] ')' | <UnaryOp> <UnaryExp>
@@ -23,6 +26,45 @@ public class UnaryExpNode extends Node {
         this.rparenToken = rparenToken;
         this.unaryOpNode = unaryOpNode;
         this.unaryExpNode = unaryExpNode;
+    }
+
+    public DataType getDataType() {
+        //<PrimaryExp>
+        if (primaryExpNode != null) {
+            return primaryExpNode.getDataType();
+        }
+        //<Ident> '(' [ <FuncRParams> ] ')'
+        else if (identToken != null) {
+            return SymbolTable.SYMBOL_TABLE.getFunctionReturnDataType(identToken).getNonConstantDataType().getCharToInt();
+        }
+        //<UnaryOp> <UnaryExp>
+        else {
+            return unaryExpNode.getDataType();
+        }
+    }
+
+    @Override
+    public void checkSemantic() {
+        //<PrimaryExp>
+        if (primaryExpNode != null) {
+            primaryExpNode.checkSemantic();
+        }
+        //<Ident> '(' [ <FuncRParams> ] ')'
+        else if (identToken != null) {
+            ArrayList<DataType> parameterDataTypes;
+            if (funcRParamsNode != null) {
+                funcRParamsNode.checkSemantic();
+                parameterDataTypes = funcRParamsNode.getParameterDataTypes();
+            } else {
+                parameterDataTypes = new ArrayList<>();
+            }
+            SymbolTable.SYMBOL_TABLE.tackle(identToken, parameterDataTypes);
+        }
+        //<UnaryOp> <UnaryExp>
+        else {
+            unaryOpNode.checkSemantic();
+            unaryExpNode.checkSemantic();
+        }
     }
 
     @Override

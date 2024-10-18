@@ -113,7 +113,12 @@ public class Lexer {
                 pos++;
                 break;
             } else if (sourceCode.charAt(pos) == '\\') {
-                if (pos + 1 < sourceCode.length() && (sourceCode.charAt(pos + 1) == '\"')) {
+                if (pos + 2 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\\' && sourceCode.charAt(pos + 2) == '\"') {
+                    pos += 3;
+                    sb.append("\\\"");
+                    break;
+                }
+                if (pos + 1 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\"') {
                     pos++;
                     sb.append(sourceCode.charAt(pos));
                 }
@@ -130,6 +135,11 @@ public class Lexer {
                 pos++;
                 break;
             } else if (sourceCode.charAt(pos) == '\\') {
+                if (pos + 2 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\\' && sourceCode.charAt(pos + 2) == '\'') {
+                    pos += 3;
+                    sb.append("\\'");
+                    break;
+                }
                 if (pos + 1 < sourceCode.length() && (sourceCode.charAt(pos + 1) == '\'')) {
                     pos++;
                     sb.append(sourceCode.charAt(pos));

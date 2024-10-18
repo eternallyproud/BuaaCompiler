@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -13,6 +14,10 @@ public class BTypeNode extends Node {
         super(NodeType.BType);
         this.intToken = intToken;
         this.charToken = charToken;
+    }
+
+    public DataType getBType() {
+        return intToken == null ? DataType.CHAR : DataType.INT;
     }
 
     @Override

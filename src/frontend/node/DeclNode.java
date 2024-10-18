@@ -14,6 +14,18 @@ public class DeclNode extends Node {
     }
 
     @Override
+    public void checkSemantic() {
+        //<ConstDecl>
+        if (constDeclNode != null) {
+            constDeclNode.checkSemantic();
+        }
+        //<VarDecl>
+        else {
+            varDeclNode.checkSemantic();
+        }
+    }
+
+    @Override
     public String toString() {
         return Objects.toString(constDeclNode, "") +
                 Objects.toString(varDeclNode, "");

@@ -16,6 +16,13 @@ public class ForAssignNode extends Node {
     }
 
     @Override
+    public void checkSemantic() {
+        lvalNode.checkSemantic();
+        lvalNode.tryAssignTo();
+        expNode.checkSemantic();
+    }
+
+    @Override
     public String toString() {
         return "" + lvalNode + assignToken + expNode + nodeType;
     }

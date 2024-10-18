@@ -1,6 +1,8 @@
 package frontend.node;
 
+import frontend.symbol.SymbolTable;
 import frontend.token.Token;
+import frontend.token.TokenType;
 
 //<MainFuncDef> ::= 'int' 'main' '(' ')' <Block>
 public class MainFuncDefNode extends Node {
@@ -17,6 +19,17 @@ public class MainFuncDefNode extends Node {
         this.lparentToken = lparentToken;
         this.rparentToken = rparentToken;
         this.blockNode = blockNode;
+    }
+
+    @Override
+    public void checkSemantic() {
+        blockNode.isFuncBlock();
+        SymbolTable.SYMBOL_TABLE.addScope();
+        blockNode.checkSemantic();
+        if (blockNode.getReturnToken().getType() == TokenType.RBRACE) {
+            SymbolTable.SYMBOL_TABLE.tackle(blockNode.getReturnToken());
+        }
+        SymbolTable.SYMBOL_TABLE.removeScope();
     }
 
     @Override

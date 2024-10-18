@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -15,6 +16,36 @@ public class FuncTypeNode extends Node {
         this.voidToken = voidToken;
         this.intToken = intToken;
         this.charToken = charToken;
+    }
+
+    public DataType getFuncType() {
+        //'int'
+        if (intToken != null) {
+            return DataType.INT_FUNC;
+        }
+        //'char'
+        if (charToken != null) {
+            return DataType.CHAR_FUNC;
+        }
+        //'void'
+        else {
+            return DataType.VOID_FUNC;
+        }
+    }
+
+    public DataType getReturnType() {
+        //'int'
+        if (intToken != null) {
+            return DataType.INT;
+        }
+        //'char'
+        if (charToken != null) {
+            return DataType.CHAR;
+        }
+        //'void'
+        else {
+            return DataType.VOID;
+        }
     }
 
     @Override

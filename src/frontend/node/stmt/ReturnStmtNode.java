@@ -1,6 +1,7 @@
 package frontend.node.stmt;
 
 import frontend.node.ExpNode;
+import frontend.symbol.SymbolTable;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -15,6 +16,24 @@ public class ReturnStmtNode extends StmtNode {
         this.returnToken = returnToken;
         this.expNode = expNode;
         this.semicnToken = semicnToken;
+    }
+
+    public Token getReturnToken() {
+        return returnToken;
+    }
+
+    @Override
+    public void checkReturnVoid() {
+        if (expNode != null) {
+            SymbolTable.SYMBOL_TABLE.tackle(returnToken);
+        }
+    }
+
+    @Override
+    public void checkSemantic() {
+        if (expNode != null) {
+            expNode.checkSemantic();
+        }
     }
 
     @Override

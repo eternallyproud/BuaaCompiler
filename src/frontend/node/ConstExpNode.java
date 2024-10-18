@@ -10,6 +10,11 @@ public class ConstExpNode extends Node {
     }
 
     @Override
+    public void checkSemantic(){
+        addExpNode.checkSemantic();
+    }
+
+    @Override
     public String toString() {
         return "" + addExpNode + nodeType;
     }

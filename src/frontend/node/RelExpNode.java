@@ -18,6 +18,19 @@ public class RelExpNode extends Node {
     }
 
     @Override
+    public void checkSemantic() {
+        //<AddExp>
+        if (relExpNode == null) {
+            addExpNode.checkSemantic();
+        }
+        //<RelExp> ('<' | '>' | '<=' | '>=') <AddExp>
+        else {
+            relExpNode.checkSemantic();
+            addExpNode.checkSemantic();
+        }
+    }
+
+    @Override
     public String toString() {
         return Objects.toString(relExpNode, "") +
                 Objects.toString(relToken, "") + addExpNode + nodeType;

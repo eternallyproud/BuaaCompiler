@@ -1,5 +1,7 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
+import frontend.symbol.SymbolTable;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -17,6 +19,22 @@ public class LValNode extends Node {
         this.lbrackToken = lbrackToken;
         this.expNode = expNode;
         this.rbrackToken = rbrackToken;
+    }
+
+    public DataType getDataType() {
+        return SymbolTable.SYMBOL_TABLE.getNumericalDataType(identToken, lbrackToken != null).getCharToInt();
+    }
+
+    public void tryAssignTo() {
+        SymbolTable.SYMBOL_TABLE.tackle(identToken, lbrackToken != null);
+    }
+
+    @Override
+    public void checkSemantic() {
+        SymbolTable.SYMBOL_TABLE.tackle(identToken);
+        if (expNode != null) {
+            expNode.checkSemantic();
+        }
     }
 
     @Override

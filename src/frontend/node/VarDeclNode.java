@@ -21,6 +21,14 @@ public class VarDeclNode extends Node {
     }
 
     @Override
+    public void checkSemantic(){
+        for (VarDefNode varDefNode : varDefNodes) {
+            varDefNode.setBType(bTypeNode.getBType());
+            varDefNode.checkSemantic();
+        }
+    }
+
+    @Override
     public String toString() {
         return bTypeNode + Tools.twoArrayListToString(varDefNodes, commaTokens) + semicnToken + nodeType;
     }

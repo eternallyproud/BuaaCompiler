@@ -11,6 +11,16 @@ public class BlockStmtNode extends StmtNode {
     }
 
     @Override
+    public void checkReturnVoid() {
+        blockNode.checkReturnVoid();
+    }
+
+    @Override
+    public void checkSemantic() {
+        blockNode.checkSemantic();
+    }
+
+    @Override
     public String toString() {
         return blockNode + super.toString();
     }

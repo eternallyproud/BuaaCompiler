@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Tools {
     public static void printStartMessage(String message) {
-        System.out.println("\n***************" + message + "开始***************\n");
+        System.out.println("\n***************" + message + "开始***************");
     }
 
     public static void printEndMessage(String message) {
@@ -54,5 +54,13 @@ public class Tools {
 
     }
 
-
+    public static int findSubstringOccurrences(String str, String subStr) {
+        int count = 0;
+        int index = 0;
+        while ((index = str.indexOf(subStr, index)) != -1) {
+            count++;
+            index += subStr.length();
+        }
+        return count;
+    }
 }

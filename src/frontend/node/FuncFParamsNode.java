@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.symbol.NumericalSymbol;
 import frontend.token.Token;
 import utils.Tools;
 
@@ -14,6 +15,22 @@ public class FuncFParamsNode extends Node {
         super(NodeType.FUNC_F_PARAMS);
         this.funcFParamNodes = funcFParamNodes;
         this.commaTokens = commaTokens;
+    }
+
+    public ArrayList<NumericalSymbol> getParameterSymbols() {
+        ArrayList<NumericalSymbol> parameterSymbols = new ArrayList<>();
+        for (FuncFParamNode funcFParamNode : funcFParamNodes) {
+            parameterSymbols.add(funcFParamNode.getSymbol());
+        }
+        return parameterSymbols;
+    }
+
+    public ArrayList<Token> getParameterTokens() {
+        ArrayList<Token> parameterTokens = new ArrayList<>();
+        for (FuncFParamNode funcFParamNode : funcFParamNodes) {
+            parameterTokens.add(funcFParamNode.getIdentToken());
+        }
+        return parameterTokens;
     }
 
     @Override

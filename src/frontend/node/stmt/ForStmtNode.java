@@ -2,6 +2,7 @@ package frontend.node.stmt;
 
 import frontend.node.CondNode;
 import frontend.node.ForAssignNode;
+import frontend.symbol.SymbolTable;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -28,6 +29,27 @@ public class ForStmtNode extends StmtNode {
         this.forAssignNode2 = forAssignNode2;
         this.rparenToken = rparenToken;
         this.stmtNode = stmtNode;
+    }
+
+    @Override
+    public void checkReturnVoid() {
+        stmtNode.checkReturnVoid();
+    }
+
+    @Override
+    public void checkSemantic() {
+        if (forAssignNode1 != null) {
+            forAssignNode1.checkSemantic();
+        }
+        if (condNode != null) {
+            condNode.checkSemantic();
+        }
+        if (forAssignNode2 != null) {
+            forAssignNode2.checkSemantic();
+        }
+        SymbolTable.SYMBOL_TABLE.addLoopDepth();
+        stmtNode.checkSemantic();
+        SymbolTable.SYMBOL_TABLE.reduceLoopDepth();
     }
 
     @Override
