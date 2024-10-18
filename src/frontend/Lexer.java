@@ -109,7 +109,12 @@ public class Lexer {
                 pos++;
                 break;
             } else if (sourceCode.charAt(pos) == '\\') {
-                if (pos + 1 < sourceCode.length() && (sourceCode.charAt(pos + 1) == '\"')) {
+                if (pos + 2 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\\' && sourceCode.charAt(pos + 2) == '\"') {
+                    pos += 3;
+                    sb.append("\\\"");
+                    break;
+                }
+                if (pos + 1 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\"') {
                     pos++;
                     sb.append(sourceCode.charAt(pos));
                 }
@@ -126,7 +131,12 @@ public class Lexer {
                 pos++;
                 break;
             } else if (sourceCode.charAt(pos) == '\\') {
-                if (pos + 1 < sourceCode.length() && (sourceCode.charAt(pos + 1) == '\'')) {
+                if (pos + 2 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\\' && sourceCode.charAt(pos + 2) == '\'') {
+                    pos += 3;
+                    sb.append("\\'");
+                    break;
+                }
+                if (pos + 1 < sourceCode.length() && sourceCode.charAt(pos + 1) == '\'') {
                     pos++;
                     sb.append(sourceCode.charAt(pos));
                 }
@@ -150,23 +160,20 @@ public class Lexer {
         char ch = sourceCode.charAt(pos);
         StringBuilder sb = new StringBuilder().append(ch);
         switch (ch) {
-            case '&':
-            case '|':
+            case '&', '|' -> {
                 if (pos + 1 < sourceCode.length() && sourceCode.charAt(pos + 1) == ch) {
                     sb.append(ch);
                     pos++;
                 }
-                break;
-            case '<':
-            case '>':
-            case '=':
-            case '!':
+            }
+            case '<', '>', '=', '!' -> {
                 if (pos + 1 < sourceCode.length() && sourceCode.charAt(pos + 1) == '=') {
                     sb.append('=');
                     pos++;
                 }
-                break;
-            default:
+            }
+            default -> {
+            }
         }
         pos++;
         String symbol = sb.toString();
