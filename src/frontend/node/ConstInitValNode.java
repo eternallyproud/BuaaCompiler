@@ -1,10 +1,13 @@
 package frontend.node;
 
+import frontend.symbol.DataType;
 import frontend.token.Token;
 import utils.Tools;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 //<ConstInitVal> ::= <ConstExp> | '{' [ <ConstExp> { ',' <ConstExp> } ] '}' | <StringConst>
 public class ConstInitValNode extends Node {
@@ -25,8 +28,32 @@ public class ConstInitValNode extends Node {
         this.strconToken = strconToken;
     }
 
+    public ArrayList<Integer> calculateValue(DataType expectedType) {
+        ArrayList<Integer> values;
+        //<ConstExp>
+        if (constExpNode != null) {
+            values = new ArrayList<>(Collections.singletonList(constExpNode.calculateValue()));
+        }
+        //'{' [ <ConstExp> { ',' <ConstExp> } ] '}'
+        else if (lbraceToken != null) {
+            values = constExpNodes.stream().map(ConstExpNode::calculateValue).collect(Collectors.toCollection(ArrayList::new));
+        }
+        //<StringConst>
+        else {
+            String strcon = strconToken.getContent();
+            values = Tools.stringToAscii(strcon.substring(1, strcon.length() - 1));
+        }
+
+        //convert
+        if (expectedType.isChar()) {
+            values.replaceAll(integer -> integer % 256);
+        }
+
+        return values;
+    }
+
     @Override
-    public void checkSemantic(){
+    public void checkSemantic() {
         //<ConstExp>
         if (constExpNode != null) {
             constExpNode.checkSemantic();

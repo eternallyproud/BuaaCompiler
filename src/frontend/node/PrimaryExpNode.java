@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.ir.value.Value;
 import frontend.symbol.DataType;
 import frontend.token.Token;
 
@@ -60,6 +61,45 @@ public class PrimaryExpNode extends Node {
         //<Character>
         else {
             characterNode.checkSemantic();
+        }
+    }
+
+    public int calculateValue() {
+        //'(' <Exp> ')'
+        if (lparenToken != null) {
+            return expNode.calculateValue();
+        }
+        //<LVal>
+        else if (lvalNode != null) {
+            return lvalNode.calculateValue();
+        }
+        //<Number>
+        else if (numberNode != null) {
+            return numberNode.calculateValue();
+        }
+        //<Character>
+        else {
+            return characterNode.calculateValue();
+        }
+    }
+
+    @Override
+    public Value buildIR() {
+        //'(' <Exp> ')'
+        if (lparenToken != null) {
+            return expNode.buildIR();
+        }
+        //<LVal>
+        else if (lvalNode != null) {
+            return lvalNode.buildIR();
+        }
+        //<Number>
+        else if (numberNode != null) {
+            return numberNode.buildIR();
+        }
+        //<Character>
+        else {
+            return characterNode.buildIR();
         }
     }
 

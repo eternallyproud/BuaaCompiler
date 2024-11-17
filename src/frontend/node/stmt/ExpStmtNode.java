@@ -1,5 +1,6 @@
 package frontend.node.stmt;
 
+import frontend.ir.value.Value;
 import frontend.node.ExpNode;
 import frontend.token.Token;
 
@@ -20,6 +21,11 @@ public class ExpStmtNode extends StmtNode {
         if (expNode != null) {
             expNode.checkSemantic();
         }
+    }
+
+    @Override
+    public Value buildIR() {
+        return expNode == null ? null : expNode.buildIR();
     }
 
     @Override

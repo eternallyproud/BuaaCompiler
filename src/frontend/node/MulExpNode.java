@@ -1,7 +1,12 @@
 package frontend.node;
 
+import frontend.IRBuilder;
+import frontend.ir.value.Value;
+import frontend.ir.value.instruction.BinaryOperation;
+import frontend.ir.value.instruction.Instruction;
 import frontend.symbol.DataType;
 import frontend.token.Token;
+import frontend.token.TokenType;
 
 import java.util.Objects;
 
@@ -22,6 +27,28 @@ public class MulExpNode extends Node {
         return unaryExpNode.getDataType();
     }
 
+    public int calculateValue() {
+        //<UnaryExp>
+        if (mulExpNode == null) {
+            return unaryExpNode.calculateValue();
+        }
+        //<MulExp> ('*' | '/' | '%') <UnaryExp>
+        else {
+            //'*'
+            if(mulToken.getType() == TokenType.MULT) {
+                return mulExpNode.calculateValue() * unaryExpNode.calculateValue();
+            }
+            //'/'
+            else if(mulToken.getType() == TokenType.DIV) {
+                return mulExpNode.calculateValue() / unaryExpNode.calculateValue();
+            }
+            //'%'
+            else {
+                return mulExpNode.calculateValue() % unaryExpNode.calculateValue();
+            }
+        }
+    }
+
     @Override
     public void checkSemantic() {
         //<UnaryExp>
@@ -32,6 +59,23 @@ public class MulExpNode extends Node {
         else {
             mulExpNode.checkSemantic();
             unaryExpNode.checkSemantic();
+        }
+    }
+
+    @Override
+    public Value buildIR() {
+        Value operand1 = mulExpNode == null ? null : mulExpNode.buildIR();
+        Value operand2 = unaryExpNode.buildIR();
+
+        //<UnaryExp>
+        if (mulExpNode == null) {
+            return operand2;
+        }
+        //<MulExp> ('*' | '/' | '%') <UnaryExp>
+        else {
+            Instruction instruction = new BinaryOperation(IRBuilder.IR_BUILDER.getLocalVarName(), mulToken.getContent(), operand1, operand2);
+            IRBuilder.IR_BUILDER.addInstruction(instruction);
+            return instruction;
         }
     }
 

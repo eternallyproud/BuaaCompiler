@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.ir.value.Value;
 import frontend.symbol.DataType;
 
 //<Exp> ::= <AddExp>
@@ -15,9 +16,18 @@ public class ExpNode extends Node {
         return addExpNode.getDataType();
     }
 
+    public int calculateValue() {
+        return addExpNode.calculateValue();
+    }
+
     @Override
     public void checkSemantic() {
         addExpNode.checkSemantic();
+    }
+
+    @Override
+    public Value buildIR() {
+        return addExpNode.buildIR();
     }
 
     @Override

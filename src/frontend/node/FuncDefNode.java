@@ -1,5 +1,10 @@
 package frontend.node;
 
+import frontend.IRBuilder;
+import frontend.ir.ValueTable;
+import frontend.ir.value.BasicBlock;
+import frontend.ir.value.Value;
+import frontend.ir.value.global.Function;
 import frontend.symbol.NumericalSymbol;
 import frontend.symbol.SymbolTable;
 import frontend.token.Token;
@@ -56,6 +61,36 @@ public class FuncDefNode extends Node {
             }
         }
         SymbolTable.SYMBOL_TABLE.removeScope();
+    }
+
+    @Override
+    public Value buildIR() {
+        //push scope
+        ValueTable.VALUE_TABLE.push();
+
+        //add function
+        Function function = new Function(IRBuilder.IR_BUILDER.getFunctionName(identToken.getContent()), funcTypeNode.getReturnType().name().toLowerCase());
+        IRBuilder.IR_BUILDER.addFunction(function);
+        ValueTable.VALUE_TABLE.addToGlobalScope(identToken.getContent(), function);
+
+        //add basic block
+        BasicBlock basicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+        IRBuilder.IR_BUILDER.addBasicBlock(basicBlock);
+        IRBuilder.IR_BUILDER.setCurrentBasicBlock(basicBlock);
+
+        //build IR
+        if(funcFParamsNode != null){
+            funcFParamsNode.buildIR();
+        }
+        blockNode.buildIR();
+
+        //ensure ret exist
+        IRBuilder.IR_BUILDER.ensureRetExist();
+
+        //pop scope
+        ValueTable.VALUE_TABLE.pop();
+
+        return null;
     }
 
     @Override

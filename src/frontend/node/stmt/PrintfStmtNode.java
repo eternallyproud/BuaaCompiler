@@ -3,11 +3,19 @@ package frontend.node.stmt;
 import error.Error;
 import error.ErrorHandler;
 import error.ErrorType;
+import frontend.IRBuilder;
+import frontend.ir.value.global.StringLiteral;
+import frontend.ir.value.Value;
+import frontend.ir.value.instruction.io.PutCh;
+import frontend.ir.value.instruction.io.PutInt;
+import frontend.ir.value.instruction.io.PutStr;
+import frontend.ir.value.type.ScalarValueType;
 import frontend.node.ExpNode;
 import frontend.token.Token;
 import utils.Tools;
 
 import java.util.ArrayList;
+import java.util.List;
 
 //<PrintfStmt> ::= 'printf' '(' <StringConst> { ',' <Exp> } ')' ';'
 public class PrintfStmtNode extends StmtNode {
@@ -29,6 +37,11 @@ public class PrintfStmtNode extends StmtNode {
         this.semicnToken = semicnToken;
     }
 
+    private int getFormatPlaceholderNum() {
+        return Tools.findSubstringOccurrences(strconToken.getContent(), "%d") +
+                Tools.findSubstringOccurrences(strconToken.getContent(), "%c");
+    }
+
     @Override
     public void checkSemantic() {
         for (ExpNode expNode : expNodes) {
@@ -39,9 +52,48 @@ public class PrintfStmtNode extends StmtNode {
         }
     }
 
-    private int getFormatPlaceholderNum() {
-        return Tools.findSubstringOccurrences(strconToken.getContent(), "%d") +
-                Tools.findSubstringOccurrences(strconToken.getContent(), "%c");
+    @Override
+    public Value buildIR() {
+        // values of expNodes
+        List<Value> values = expNodes.stream().map(ExpNode::buildIR).toList();
+
+        // format string
+        String strcon = strconToken.getContent().substring(1, strconToken.getContent().length() - 1);
+
+        int expCount = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < strcon.length(); i++) {
+            if (strcon.charAt(i) == '%') {
+                if (!sb.isEmpty()) {
+                    StringLiteral stringLiteral = new StringLiteral(IRBuilder.IR_BUILDER.getStringLiteralName(), sb.append("\\00").toString());
+                    IRBuilder.IR_BUILDER.addStringLiteral(stringLiteral);
+                    IRBuilder.IR_BUILDER.addInstruction(new PutStr(IRBuilder.IR_BUILDER.getLocalVarName(), stringLiteral));
+                    sb.setLength(0);
+                }
+                if (strcon.charAt(i + 1) == 'd') {
+                    //putint
+                    PutInt putInt = new PutInt(IRBuilder.IR_BUILDER.getLocalVarName(), values.get(expCount++).convertTo(ScalarValueType.INT32));
+                    IRBuilder.IR_BUILDER.addInstruction(putInt);
+                } else if (strcon.charAt(i + 1) == 'c') {
+                    //putch
+                    PutCh putCh = new PutCh(IRBuilder.IR_BUILDER.getLocalVarName(), values.get(expCount++).convertTo(ScalarValueType.INT32));
+                    IRBuilder.IR_BUILDER.addInstruction(putCh);
+                }
+                i++;
+            } else if (strcon.charAt(i) == '\\' && strcon.charAt(i + 1) == 'n') {
+                sb.append("\\0A");
+                i++;
+            } else {
+                sb.append(strcon.charAt(i));
+            }
+        }
+        if (!sb.isEmpty()) {
+            StringLiteral stringLiteral = new StringLiteral(IRBuilder.IR_BUILDER.getStringLiteralName(), sb.append("\\00").toString());
+            IRBuilder.IR_BUILDER.addStringLiteral(stringLiteral);
+            IRBuilder.IR_BUILDER.addInstruction(new PutStr(IRBuilder.IR_BUILDER.getLocalVarName(), stringLiteral));
+        }
+
+        return super.buildIR();
     }
 
     @Override

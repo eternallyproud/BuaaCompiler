@@ -1,5 +1,7 @@
 package frontend.node;
 
+import frontend.ir.ValueTable;
+import frontend.ir.value.Value;
 import frontend.symbol.SymbolTable;
 import utils.Tools;
 
@@ -29,6 +31,21 @@ public class CompUnitNode extends Node {
         }
         mainFuncDefNode.checkSemantic();
         SymbolTable.SYMBOL_TABLE.removeScope();
+    }
+
+    @Override
+    public Value buildIR() {
+        ValueTable.VALUE_TABLE.push();
+        for (DeclNode declNode : declNodes) {
+            declNode.buildIR();
+        }
+        for (FuncDefNode funcDefNode : funcDefNodes) {
+            funcDefNode.buildIR();
+        }
+        mainFuncDefNode.buildIR();
+        ValueTable.VALUE_TABLE.pop();
+
+        return super.buildIR();
     }
 
     @Override

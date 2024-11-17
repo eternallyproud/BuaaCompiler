@@ -4,11 +4,19 @@ import java.util.ArrayList;
 
 public class Tools {
     public static void printStartMessage(String message) {
-        System.out.println("\n***************" + message + "开始***************");
+        printMessage(message + "开始");
     }
 
     public static void printEndMessage(String message) {
-        System.out.println("\n***************" + message + "结束***************");
+        printMessage(message + "结束");
+    }
+
+    public static void printFailMessage(String message) {
+        printMessage(message + "失败");
+    }
+
+    public static void printMessage(String message) {
+        System.out.println("\n***************" + message + "***************");
     }
 
     public static String arrayListToString(ArrayList<?> list, String delimiter) {
@@ -62,5 +70,31 @@ public class Tools {
             index += subStr.length();
         }
         return count;
+    }
+
+    public static ArrayList<Integer> stringToAscii(String inputString) {
+        ArrayList<Integer> result = new ArrayList<>();
+
+        String decodedString = inputString
+                .replaceAll("\\\\a", "\u0007")
+                .replaceAll("\\\\b", "\u0008")
+                .replaceAll("\\\\t", "\t")
+                .replaceAll("\\\\n", "\n")
+                .replaceAll("\\\\v", "\u000B")
+                .replaceAll("\\\\f", "\f")
+                .replaceAll("\\\\'", "'")
+                .replaceAll("\\\\\"", "\"")
+                .replaceAll("\\\\0", "\0")
+                .replaceAll("\\\\", "\\");
+
+        for( char c : decodedString.toCharArray()) {
+            result.add((int) c);
+        }
+
+        return result;
+    }
+
+    public static int characterToAscii(String inputString) {
+        return stringToAscii(inputString).get(0);
     }
 }

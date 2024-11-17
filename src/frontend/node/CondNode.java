@@ -1,5 +1,7 @@
 package frontend.node;
 
+import frontend.ir.value.BasicBlock;
+
 //<Cond> ::= <LOrExp>
 public class CondNode extends Node {
     private final LOrExpNode lOrExpNode;
@@ -7,6 +9,10 @@ public class CondNode extends Node {
     public CondNode(LOrExpNode lOrExpNode) {
         super(NodeType.COND);
         this.lOrExpNode = lOrExpNode;
+    }
+
+    public void buildIRForBranch(BasicBlock ifBasicBlock, BasicBlock elseBasicBlock){
+        lOrExpNode.buildIRForBranch(ifBasicBlock, elseBasicBlock);
     }
 
     @Override

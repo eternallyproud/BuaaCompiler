@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.ir.value.Value;
 import frontend.node.stmt.ReturnStmtNode;
 import frontend.node.stmt.StmtNode;
 import frontend.token.Token;
@@ -41,6 +42,20 @@ public class BlockItemNode extends Node {
         else {
             stmtNode.checkSemantic();
         }
+    }
+
+    @Override
+    public Value buildIR() {
+        //<Decl>
+        if (declNode != null) {
+            declNode.buildIR();
+        }
+        //<Stmt>
+        else {
+            stmtNode.buildIR();
+        }
+
+        return super.buildIR();
     }
 
     @Override

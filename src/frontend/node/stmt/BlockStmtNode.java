@@ -1,5 +1,6 @@
 package frontend.node.stmt;
 
+import frontend.ir.value.Value;
 import frontend.node.BlockNode;
 
 //<BlockItem> ::= <Block>
@@ -18,6 +19,11 @@ public class BlockStmtNode extends StmtNode {
     @Override
     public void checkSemantic() {
         blockNode.checkSemantic();
+    }
+
+    @Override
+    public Value buildIR() {
+        return blockNode.buildIR();
     }
 
     @Override

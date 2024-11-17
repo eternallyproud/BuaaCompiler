@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.ir.value.Value;
 import frontend.token.Token;
 import utils.Tools;
 
@@ -28,6 +29,15 @@ public class ConstDeclNode extends Node {
             constDefNode.setBType(bTypeNode.getBType().getConstantDataType());
             constDefNode.checkSemantic();
         }
+    }
+
+    @Override
+    public Value buildIR() {
+        for (ConstDefNode constDefNode : constDefNodes) {
+            constDefNode.buildIR();
+        }
+
+        return super.buildIR();
     }
 
     @Override

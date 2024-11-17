@@ -1,5 +1,9 @@
 package frontend.node;
 
+import frontend.IRBuilder;
+import frontend.ir.value.Value;
+import frontend.ir.value.instruction.other.ICmp;
+import frontend.ir.value.type.ScalarValueType;
 import frontend.token.Token;
 
 import java.util.Objects;
@@ -27,6 +31,24 @@ public class RelExpNode extends Node {
         else {
             relExpNode.checkSemantic();
             addExpNode.checkSemantic();
+        }
+    }
+
+    @Override
+    public Value buildIR() {
+        //<AddExp>
+        if (relExpNode == null) {
+            return addExpNode.buildIR();
+        }
+        //<RelExp> ('<' | '>' | '<=' | '>=') <AddExp>
+        else {
+            Value operand1 = relExpNode.buildIR().convertTo(ScalarValueType.INT32);
+            Value operand2 = addExpNode.buildIR().convertTo(ScalarValueType.INT32);
+
+            //icmp
+            ICmp icmp = new ICmp(IRBuilder.IR_BUILDER.getLocalVarName(), relToken.getContent(), operand1, operand2);
+            IRBuilder.IR_BUILDER.addInstruction(icmp);
+            return icmp;
         }
     }
 

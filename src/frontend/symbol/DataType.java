@@ -1,5 +1,9 @@
 package frontend.symbol;
 
+import frontend.ir.value.type.ArrayValueType;
+import frontend.ir.value.type.ScalarValueType;
+import frontend.ir.value.type.ValueType;
+
 public enum DataType {
     CONST_CHAR("ConstChar"),
     CONST_INT("ConstInt"),
@@ -14,12 +18,13 @@ public enum DataType {
     CHAR_FUNC("CharFunc"),
     VOID("Void"),
     UNEXPECTED("Unexpected");
-    public final String typeName;
+    private final String typeName;
 
     DataType(String typeName) {
         this.typeName = typeName;
     }
 
+    //array -> non-array
     public DataType getReducedDataType() {
         return switch (this) {
             case INT_ARRAY -> INT;
@@ -30,6 +35,7 @@ public enum DataType {
         };
     }
 
+    //non-array -> array
     public DataType getRaisedDataType() {
         return switch (this) {
             case INT -> INT_ARRAY;
@@ -40,6 +46,7 @@ public enum DataType {
         };
     }
 
+    //non-const -> const
     public DataType getConstantDataType() {
         return switch (this) {
             case INT -> CONST_INT;
@@ -51,6 +58,7 @@ public enum DataType {
         };
     }
 
+    //const -> non-const
     public DataType getNonConstantDataType() {
         return switch (this) {
             case CONST_INT -> INT;
@@ -62,6 +70,7 @@ public enum DataType {
         };
     }
 
+    //char -> int
     public DataType getCharToInt() {
         return switch (this) {
             case CHAR -> INT;
@@ -73,6 +82,49 @@ public enum DataType {
     public boolean canBeAssignedTo() {
         return switch (this) {
             case INT, CHAR -> true;
+            default -> false;
+        };
+    }
+
+    public ValueType getValueType(int elementNumber) {
+        return switch (this) {
+            case CONST_INT, INT -> ScalarValueType.INT32;
+            case CONST_CHAR, CHAR -> ScalarValueType.INT8;
+            case CONST_INT_ARRAY, INT_ARRAY -> new ArrayValueType(ScalarValueType.INT32, elementNumber);
+            case CONST_CHAR_ARRAY, CHAR_ARRAY -> new ArrayValueType(ScalarValueType.INT8, elementNumber);
+            case VOID -> ScalarValueType.VOID;
+            default -> null;
+        };
+    }
+
+    public ValueType getElementType() {
+        if (this.isArray()) {
+            return switch (this) {
+                case INT_ARRAY, CONST_INT_ARRAY -> ScalarValueType.INT32;
+                case CHAR_ARRAY, CONST_CHAR_ARRAY -> ScalarValueType.INT8;
+                default -> null;
+            };
+        }
+        return null;
+    }
+
+    public boolean isArray() {
+        return switch (this) {
+            case INT_ARRAY, CHAR_ARRAY, CONST_INT_ARRAY, CONST_CHAR_ARRAY -> true;
+            default -> false;
+        };
+    }
+
+    public boolean isChar() {
+        return switch (this) {
+            case CHAR, CONST_CHAR -> true;
+            default -> false;
+        };
+    }
+
+    public boolean isConst() {
+        return switch (this) {
+            case CONST_INT, CONST_CHAR, CONST_INT_ARRAY, CONST_CHAR_ARRAY -> true;
             default -> false;
         };
     }

@@ -38,8 +38,8 @@ public class SymbolTable {
     }
 
     private Symbol getSymbolInScopeStack(String name) {
-        for (int i = currentScope; i >= 1; i--) {
-            Symbol symbol = getSymbolInScope(name, i);
+        for (int i = scopeStack.size() - 1; i >= 0; i--) {
+            Symbol symbol = getSymbolInScope(name, scopeStack.get(i));
             if (symbol != null) {
                 return symbol;
             }

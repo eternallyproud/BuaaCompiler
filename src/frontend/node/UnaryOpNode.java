@@ -1,26 +1,23 @@
 package frontend.node;
 
 import frontend.token.Token;
-
-import java.util.Objects;
+import frontend.token.TokenType;
 
 //<UnaryOp> ::= '+' | '-' | '!'
 public class UnaryOpNode extends Node {
-    private final Token plusToken;
-    private final Token minuToken;
-    private final Token notToken;
+    private final Token opToken;
 
-    public UnaryOpNode(Token plusToken, Token minuToken, Token notToken) {
+    public UnaryOpNode(Token opToken) {
         super(NodeType.UNARY_OP);
-        this.plusToken = plusToken;
-        this.minuToken = minuToken;
-        this.notToken = notToken;
+        this.opToken = opToken;
+    }
+
+    public TokenType getOpTokenType() {
+        return opToken.getType();
     }
 
     @Override
     public String toString() {
-        return Objects.toString(plusToken, "") +
-                Objects.toString(minuToken, "") +
-                Objects.toString(notToken, "") + nodeType;
+        return "" + opToken + nodeType;
     }
 }

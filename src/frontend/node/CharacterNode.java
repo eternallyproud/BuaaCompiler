@@ -1,7 +1,10 @@
 package frontend.node;
 
+import frontend.ir.value.Constant;
+import frontend.ir.value.Value;
 import frontend.symbol.DataType;
 import frontend.token.Token;
+import utils.Tools;
 
 //<Character> ::= <CharConst>
 public class CharacterNode extends Node {
@@ -14,6 +17,16 @@ public class CharacterNode extends Node {
 
     public DataType getDataType() {
         return DataType.CHAR.getCharToInt();
+    }
+
+    public int calculateValue() {
+        String charConst = charConstToken.getContent();
+        return Tools.characterToAscii(charConst.substring(1, charConst.length() - 1));
+    }
+
+    @Override
+    public Value buildIR() {
+        return new Constant.Char(Tools.characterToAscii(charConstToken.getContent().substring(1, charConstToken.getContent().length() - 1)));
     }
 
     @Override

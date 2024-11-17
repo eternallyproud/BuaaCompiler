@@ -1,5 +1,7 @@
 package frontend.node;
 
+import frontend.ir.ValueTable;
+import frontend.ir.value.Value;
 import frontend.symbol.SymbolTable;
 import frontend.token.Token;
 import utils.Tools;
@@ -50,6 +52,21 @@ public class BlockNode extends Node {
         if (!isFuncBlock) {
             SymbolTable.SYMBOL_TABLE.removeScope();
         }
+    }
+
+    @Override
+    public Value buildIR() {
+        if (!isFuncBlock) {
+            ValueTable.VALUE_TABLE.push();
+        }
+        for (BlockItemNode blockItemNode : blockItemNodes) {
+            blockItemNode.buildIR();
+        }
+        if (!isFuncBlock) {
+            ValueTable.VALUE_TABLE.pop();
+        }
+
+        return super.buildIR();
     }
 
     @Override

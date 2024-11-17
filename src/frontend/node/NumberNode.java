@@ -1,5 +1,7 @@
 package frontend.node;
 
+import frontend.ir.value.Constant;
+import frontend.ir.value.Value;
 import frontend.symbol.DataType;
 import frontend.token.Token;
 
@@ -14,6 +16,15 @@ public class NumberNode extends Node {
 
     public DataType getDataType() {
         return DataType.INT;
+    }
+
+    public int calculateValue() {
+        return Integer.parseInt(intConstToken.getContent());
+    }
+
+    @Override
+    public Value buildIR() {
+        return new Constant.Int(Integer.parseInt(intConstToken.getContent()));
     }
 
     @Override

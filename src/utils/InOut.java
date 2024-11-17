@@ -53,4 +53,8 @@ public class InOut {
     public static void writeSemanticResult(String content) {
         writeFile(Configuration.SEMANTIC_RESULT_PATH, content);
     }
+
+    public static void writeIRResult(String content) {
+        writeFile(Configuration.IR_RESULT_PATH, content);
+    }
 }

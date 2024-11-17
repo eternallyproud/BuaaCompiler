@@ -9,6 +9,10 @@ public class ConstExpNode extends Node {
         this.addExpNode = addExpNode;
     }
 
+    public int calculateValue(){
+        return addExpNode.calculateValue();
+    }
+
     @Override
     public void checkSemantic(){
         addExpNode.checkSemantic();

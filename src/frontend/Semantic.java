@@ -6,8 +6,8 @@ import utils.Tools;
 public class Semantic {
     private final CompUnitNode compUnitNode;
 
-    public Semantic(Parser parser) {
-        this.compUnitNode = parser.getCompUnitNode();
+    public Semantic(CompUnitNode compUnitNode) {
+        this.compUnitNode = compUnitNode;
     }
 
     public void doSemanticAnalysis() {

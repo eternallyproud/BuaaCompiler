@@ -1,5 +1,11 @@
 package frontend.node.stmt;
 
+import frontend.IRBuilder;
+import frontend.ir.value.Value;
+import frontend.ir.value.instruction.io.GetChar;
+import frontend.ir.value.instruction.io.GetInt;
+import frontend.ir.value.instruction.memory.Store;
+import frontend.ir.value.type.ValueType;
 import frontend.node.ExpNode;
 import frontend.node.LValNode;
 import frontend.token.Token;
@@ -34,6 +40,54 @@ public class LValStmtNode extends StmtNode {
         lValNode.tryAssignTo();
         if (expNode != null) {
             expNode.checkSemantic();
+        }
+    }
+
+    @Override
+    public Value buildIR() {
+        //lVal value
+        Value lValValue = lValNode.buildIRForAssign();
+
+        //expected value type
+        ValueType expectedValueType = lValValue.getValueType().getPointerReferenceValueType();
+
+        //<LVal> '=' <Exp> ';'
+        if (expNode != null) {
+            //convert
+            Value assignValue = expNode.buildIR().convertTo(expectedValueType);
+
+            //store
+            Store store = new Store(IRBuilder.IR_BUILDER.getLocalVarName(), assignValue, lValValue);
+            IRBuilder.IR_BUILDER.addInstruction(store);
+            return store;
+        }
+        //<LVal> '=' 'getint' '(' ')' ';'
+        else if (getintToken != null) {
+            //getint
+            GetInt getInt = new GetInt(IRBuilder.IR_BUILDER.getLocalVarName());
+            IRBuilder.IR_BUILDER.addInstruction(getInt);
+
+            //convert
+            Value assignor = getInt.convertTo(expectedValueType);
+
+            //store
+            Store store = new Store(IRBuilder.IR_BUILDER.getLocalVarName(), assignor, lValValue);
+            IRBuilder.IR_BUILDER.addInstruction(store);
+            return store;
+        }
+        //<LVal> '=' 'getchar' '(' ')' ';'
+        else {
+            //getchar
+            GetChar getChar = new GetChar(IRBuilder.IR_BUILDER.getLocalVarName());
+            IRBuilder.IR_BUILDER.addInstruction(getChar);
+
+            //convert
+            Value assignor = getChar.convertTo(expectedValueType);
+
+            //store
+            Store store = new Store(IRBuilder.IR_BUILDER.getLocalVarName(), assignor, lValValue);
+            IRBuilder.IR_BUILDER.addInstruction(store);
+            return store;
         }
     }
 

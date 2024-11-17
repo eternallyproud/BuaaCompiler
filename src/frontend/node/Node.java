@@ -1,5 +1,7 @@
 package frontend.node;
 
+import frontend.ir.value.Value;
+
 public abstract class Node {
     protected final NodeType nodeType;
 
@@ -12,5 +14,9 @@ public abstract class Node {
     }
 
     public void checkSemantic() {
+    }
+
+    public Value buildIR() {
+        return null;
     }
 }

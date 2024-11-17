@@ -3,16 +3,7 @@ package frontend;
 import error.*;
 import error.Error;
 import frontend.node.*;
-import frontend.node.stmt.BlockStmtNode;
-import frontend.node.stmt.BreakStmtNode;
-import frontend.node.stmt.ContinueStmtNode;
-import frontend.node.stmt.ExpStmtNode;
-import frontend.node.stmt.ForStmtNode;
-import frontend.node.stmt.IfStmtNode;
-import frontend.node.stmt.LValStmtNode;
-import frontend.node.stmt.PrintfStmtNode;
-import frontend.node.stmt.ReturnStmtNode;
-import frontend.node.stmt.StmtNode;
+import frontend.node.stmt.*;
 import frontend.token.*;
 import utils.InOut;
 import utils.Tools;
@@ -853,26 +844,13 @@ public class Parser {
 
     //<UnaryOp> ::= '+' | '-' | '!'
     private UnaryOpNode parseUnaryOp() {
-        Token plusToken = null;
-        Token minuToken = null;
-        Token notToken = null;
+        Token opToken = switch (Objects.requireNonNull(peek(0))){
+            case PLUS -> expect(TokenType.PLUS);
+            case MINU -> expect(TokenType.MINU);
+            default -> expect(TokenType.NOT);
+        };
 
-        //'+'
-        if (peek(0) == TokenType.PLUS) {
-            plusToken = expect(TokenType.PLUS);
-        }
-
-        //'-'
-        else if (peek(0) == TokenType.MINU) {
-            minuToken = expect(TokenType.MINU);
-        }
-
-        //'!'
-        else {
-            notToken = expect(TokenType.NOT);
-        }
-
-        return new UnaryOpNode(plusToken, minuToken, notToken);
+        return new UnaryOpNode(opToken);
     }
 
     //<FuncRParams> ::= <Exp> { ',' <Exp> }

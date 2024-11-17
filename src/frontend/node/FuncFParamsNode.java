@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.ir.value.Value;
 import frontend.symbol.NumericalSymbol;
 import frontend.token.Token;
 import utils.Tools;
@@ -31,6 +32,15 @@ public class FuncFParamsNode extends Node {
             parameterTokens.add(funcFParamNode.getIdentToken());
         }
         return parameterTokens;
+    }
+
+    @Override
+    public Value buildIR() {
+        for(FuncFParamNode funcFParamNode : funcFParamNodes) {
+            funcFParamNode.buildIR();
+        }
+
+        return null;
     }
 
     @Override

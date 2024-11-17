@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.ir.value.Value;
 import frontend.symbol.DataType;
 import frontend.token.Token;
 import utils.Tools;
@@ -20,9 +21,17 @@ public class FuncRParamsNode extends Node {
     public ArrayList<DataType> getParameterDataTypes() {
         ArrayList<DataType> parameterDataTypes = new ArrayList<>();
         for (ExpNode expNode : expNodes) {
-            parameterDataTypes.add(expNode.getDataType());
+            parameterDataTypes.add(expNode.getDataType().getNonConstantDataType());
         }
         return parameterDataTypes;
+    }
+
+    public ArrayList<Value> buildValue(){
+        ArrayList<Value> values = new ArrayList<>();
+        for (ExpNode expNode : expNodes) {
+            values.add(expNode.buildIR());
+        }
+        return values;
     }
 
     @Override

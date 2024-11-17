@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.ir.value.type.ValueType;
 import frontend.symbol.DataType;
 import frontend.token.Token;
 
@@ -18,6 +19,10 @@ public class BTypeNode extends Node {
 
     public DataType getBType() {
         return intToken == null ? DataType.CHAR : DataType.INT;
+    }
+
+    public ValueType getValueType() {
+        return getBType().getValueType(1);
     }
 
     @Override

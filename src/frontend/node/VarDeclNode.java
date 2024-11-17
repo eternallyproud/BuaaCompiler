@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.ir.value.Value;
 import frontend.token.Token;
 import utils.Tools;
 
@@ -26,6 +27,15 @@ public class VarDeclNode extends Node {
             varDefNode.setBType(bTypeNode.getBType());
             varDefNode.checkSemantic();
         }
+    }
+
+    @Override
+    public Value buildIR() {
+        for (VarDefNode varDefNode : varDefNodes) {
+            varDefNode.buildIR();
+        }
+
+        return super.buildIR();
     }
 
     @Override

@@ -1,10 +1,15 @@
 package frontend.node;
 
+import frontend.ir.value.Constant;
+import frontend.ir.value.Value;
+import frontend.symbol.DataType;
 import frontend.token.Token;
 import utils.Tools;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 //<InitVal> ::= <Exp> | '{' [ <Exp> { ',' <Exp> } ] '}' | <StringConst>
 public class InitValNode extends Node {
@@ -25,14 +30,61 @@ public class InitValNode extends Node {
         this.strconToken = strconToken;
     }
 
-    @Override
-    public void checkSemantic(){
+    public ArrayList<Integer> calculateValue(DataType expectedType) {
+        ArrayList<Integer> values;
         //<Exp>
-        if(expNode != null){
+        if (expNode != null) {
+            values = new ArrayList<>(Collections.singletonList(expNode.calculateValue()));
+        }
+        //'{' [ <Exp> { ',' <Exp> } ] '}'
+        else if (lbraceToken != null) {
+            values = expNodes.stream().map(ExpNode::calculateValue).collect(Collectors.toCollection(ArrayList::new));
+        }
+        //<StringConst>
+        else {
+            String strcon = strconToken.getContent();
+            values = Tools.stringToAscii(strcon.substring(1, strcon.length() - 1));
+        }
+
+        //convert
+        if (expectedType.isChar()) {
+            values.replaceAll(integer -> integer % 256);
+        }
+
+        return values;
+    }
+
+    public ArrayList<Value> buildValue(DataType expectedType) {
+        ArrayList<Value> values;
+        //<Exp>
+        if (expNode != null) {
+            values = new ArrayList<>(Collections.singletonList(expNode.buildIR()));
+        }
+        //'{' [ <Exp> { ',' <Exp> } ] '}'
+        else if (lbraceToken != null) {
+            values = expNodes.stream().map(ExpNode::buildIR).collect(Collectors.toCollection(ArrayList::new));
+        }
+        //<StringConst>
+        else {
+            String strcon = strconToken.getContent();
+            ArrayList<Integer> constValues = Tools.stringToAscii(strcon.substring(1, strcon.length() - 1));
+            values = constValues.stream().map(Constant.Char::new).collect(Collectors.toCollection(ArrayList::new));
+        }
+
+        //convert
+        values.replaceAll(value -> value.convertTo(expectedType.getValueType(1)));
+
+        return values;
+    }
+
+    @Override
+    public void checkSemantic() {
+        //<Exp>
+        if (expNode != null) {
             expNode.checkSemantic();
         }
         //'{' [ <Exp> { ',' <Exp> } ] '}'
-        else if (lbraceToken != null){
+        else if (lbraceToken != null) {
             for (ExpNode expNode : expNodes)
                 expNode.checkSemantic();
         }

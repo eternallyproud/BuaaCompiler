@@ -1,8 +1,20 @@
 package frontend.node;
 
+import frontend.IRBuilder;
+import frontend.ir.ValueTable;
+import frontend.ir.value.Constant;
+import frontend.ir.value.Value;
+import frontend.ir.value.global.Function;
+import frontend.ir.value.instruction.BinaryOperation;
+import frontend.ir.value.instruction.Instruction;
+import frontend.ir.value.instruction.other.Call;
+import frontend.ir.value.instruction.other.ICmp;
+import frontend.ir.value.type.ScalarValueType;
+import frontend.ir.value.type.ValueType;
 import frontend.symbol.DataType;
 import frontend.symbol.SymbolTable;
 import frontend.token.Token;
+import frontend.token.TokenType;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -43,6 +55,28 @@ public class UnaryExpNode extends Node {
         }
     }
 
+    public int calculateValue() {
+        //<PrimaryExp>
+        if (primaryExpNode != null) {
+            return primaryExpNode.calculateValue();
+        }
+        //<UnaryOp> <UnaryExp>
+        else {
+            //'+'
+            if (unaryOpNode.getOpTokenType() == TokenType.PLUS) {
+                return unaryExpNode.calculateValue();
+            }
+            //'-'
+            else if (unaryOpNode.getOpTokenType() == TokenType.MINU) {
+                return -unaryExpNode.calculateValue();
+            }
+            //'!'
+            else {
+                return unaryExpNode.calculateValue() == 1 ? 0 : 1;
+            }
+        }
+    }
+
     @Override
     public void checkSemantic() {
         //<PrimaryExp>
@@ -65,6 +99,56 @@ public class UnaryExpNode extends Node {
             unaryOpNode.checkSemantic();
             unaryExpNode.checkSemantic();
         }
+    }
+
+    @Override
+    public Value buildIR() {
+        //<PrimaryExp>
+        if (primaryExpNode != null) {
+            return primaryExpNode.buildIR();
+        }
+        //<Ident> '(' [ <FuncRParams> ] ')'
+        else if (identToken != null) {
+            //function
+            Function function = (Function) ValueTable.VALUE_TABLE.getFromGlobalScope(identToken.getContent());
+
+            //parameters
+            ArrayList<Value> params = funcRParamsNode != null ? funcRParamsNode.buildValue() : new ArrayList<>();
+
+            //convert
+            ArrayList<ValueType> parameterValueTypes = function.getParametersValueType();
+            for (int i = 0; i < parameterValueTypes.size(); i++) {
+                params.set(i, params.get(i).convertTo(parameterValueTypes.get(i)));
+            }
+
+            //call
+            Call call = new Call(IRBuilder.IR_BUILDER.getLocalVarName(), function, params);
+            IRBuilder.IR_BUILDER.addInstruction(call);
+
+            return call.getValueType() == ScalarValueType.INT8 ? call.convertTo(ScalarValueType.INT32) : call;
+        }
+        //<UnaryOp> <UnaryExp>
+        else {
+            Value operand1 = new Constant.Int(0);
+            Value operand2 = unaryExpNode.buildIR();
+
+            switch (unaryOpNode.getOpTokenType()) {
+                case PLUS -> {
+                    return operand2;
+                }
+                case MINU -> {
+                    Instruction instruction = new BinaryOperation(IRBuilder.IR_BUILDER.getLocalVarName(), "-", operand1, operand2);
+                    IRBuilder.IR_BUILDER.addInstruction(instruction);
+                    return instruction;
+                }
+                case NOT -> {
+                    ICmp iCmp = new ICmp(IRBuilder.IR_BUILDER.getLocalVarName(), "==", operand2, new Constant.Int(0));
+                    IRBuilder.IR_BUILDER.addInstruction(iCmp);
+                    return iCmp.convertTo(ScalarValueType.INT32);
+                }
+            }
+        }
+        return null;
     }
 
     @Override

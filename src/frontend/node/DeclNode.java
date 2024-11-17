@@ -1,5 +1,7 @@
 package frontend.node;
 
+import frontend.ir.value.Value;
+
 import java.util.Objects;
 
 //<Decl> ::= <ConstDecl> | <VarDecl>
@@ -23,6 +25,20 @@ public class DeclNode extends Node {
         else {
             varDeclNode.checkSemantic();
         }
+    }
+
+    @Override
+    public Value buildIR() {
+        //<ConstDecl>
+        if (constDeclNode != null) {
+            constDeclNode.buildIR();
+        }
+        //<VarDecl>
+        else {
+            varDeclNode.buildIR();
+        }
+
+        return super.buildIR();
     }
 
     @Override
