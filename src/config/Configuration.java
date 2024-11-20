@@ -14,6 +14,8 @@ public class Configuration {
     public static String SEMANTIC_RESULT_PATH = "symbol.txt";
     // 中间代码输出路径
     public static String IR_RESULT_PATH = "llvm_ir.txt";
+    // 汇编代码输出路径
+    public static String ASSEMBLY_RESULT_PATH = "mips.txt";
     // 标准结果路径
     public static String ANSWER_PATH = "ans.txt";
 

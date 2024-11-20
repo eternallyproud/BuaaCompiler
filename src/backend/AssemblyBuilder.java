@@ -1,0 +1,112 @@
+package backend;
+
+import backend.assembly.Assembly;
+import error.ErrorHandler;
+import frontend.ir.llvm.value.Module;
+import frontend.ir.llvm.value.Value;
+import utils.InOut;
+import utils.Tools;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class AssemblyBuilder {
+    public final static AssemblyBuilder ASSEMBLY_BUILDER = new AssemblyBuilder();
+    private Module module;
+    private final AssemblyRecord assemblyRecord;
+    private int currentStackOffset;
+    private HashMap<Value, Integer> currentValueMap;
+
+    private AssemblyBuilder() {
+        this.assemblyRecord = new AssemblyRecord();
+    }
+
+    public void init(Module module) {
+        this.module = module;
+    }
+
+    public void buildAssembly() {
+        if (!ErrorHandler.ERROR_HANDLER.isEmpty()) {
+            Tools.printFailMessage("汇编代码生成");
+        } else {
+            Tools.printStartMessage("汇编代码生成");
+            module.buildAssembly();
+            Tools.printEndMessage("汇编代码生成");
+        }
+    }
+
+    public void addToData(Assembly assembly) {
+        assemblyRecord.addToData(assembly);
+    }
+
+    public void addToText(Assembly assembly) {
+        assemblyRecord.addToText(assembly);
+    }
+
+    public void enterFunction() {
+        currentStackOffset = 0;
+        currentValueMap = new HashMap<>();
+    }
+
+    //alloc a word on stack top for value, if value is not mapped
+    public int assignWordOnStackTopForValueIfNotMapped(Value value) {
+        //get
+        if (currentValueMap.containsKey(value)) {
+            return currentValueMap.get(value);
+        }
+        //alloc
+        return assignWordOnStackTopForValue(value);
+    }
+
+    //alloc a word on stack top for value
+    public int assignWordOnStackTopForValue(Value value) {
+        allocSpaceOnStackTop(1);
+        mapValueOnStackTop(value);
+        return currentStackOffset;
+    }
+
+    //alloc space on stack top for value
+    public int allocSpaceOnStackTop(int wordSize) {
+        return addStackOffset(-wordSize * 4);
+    }
+
+    public int addStackOffset(int delta) {
+        currentStackOffset += delta;
+        return currentStackOffset;
+    }
+
+    public int getStackOffset(){
+        return currentStackOffset;
+    }
+
+    public void mapValueOnStackTop(Value value) {
+        currentValueMap.put(value, currentStackOffset);
+    }
+
+    public void mapValueToExistedValueOnStack(Value newValue, Value value) {
+        currentValueMap.put(newValue, getValueStackOffset(value));
+    }
+
+    public int getValueStackOffset(Value value) {
+        return currentValueMap.get(value);
+    }
+
+    public boolean memoryToRegister(){
+        return false;
+    }
+
+    public void allocRegisterForValue(Value ignoredValue, Register ignoredRegister) {
+    }
+
+    public Register getRegisterOfValue(Value ignoredValue) {
+        return null;
+    }
+
+    public ArrayList<Register> getMappedRegisters(){
+        return new ArrayList<>();
+    }
+
+    public void writeAssembly() {
+        InOut.writeAssemblyResult(assemblyRecord.toString());
+    }
+}

@@ -1,9 +1,9 @@
+import backend.AssemblyBuilder;
 import error.ErrorHandler;
-import frontend.Lexer;
-import frontend.Parser;
-import frontend.Semantic;
-import frontend.IRBuilder;
-import frontend.symbol.SymbolTable;
+import frontend.lexer.Lexer;
+import frontend.parser.Parser;
+import frontend.ir.IRBuilder;
+import frontend.semantic.SymbolTable;
 import utils.InOut;
 
 public class Compiler {
@@ -14,13 +14,13 @@ public class Compiler {
         lexer.writeTokens();
 
         // parser
-        Parser parser = new Parser(lexer);
+        Parser parser = new Parser(lexer.getTokenList());
         parser.doParserAnalysis();
         parser.writeCompUnitNode();
 
         // semantic
-        Semantic semantic = new Semantic(parser.getCompUnitNode());
-        semantic.doSemanticAnalysis();
+        SymbolTable.SYMBOL_TABLE.init(parser.getCompUnitNode());
+        SymbolTable.SYMBOL_TABLE.doSemanticAnalysis();
         SymbolTable.SYMBOL_TABLE.writeSymbolTable();
 
         // error
@@ -30,6 +30,11 @@ public class Compiler {
         IRBuilder.IR_BUILDER.init(parser.getCompUnitNode());
         IRBuilder.IR_BUILDER.buildIR();
         IRBuilder.IR_BUILDER.writeIR();
+
+        // assembly
+        AssemblyBuilder.ASSEMBLY_BUILDER.init(IRBuilder.IR_BUILDER.getModule());
+        AssemblyBuilder.ASSEMBLY_BUILDER.buildAssembly();
+        AssemblyBuilder.ASSEMBLY_BUILDER.writeAssembly();
 
         // checker
         // Checker.checkResult(Configuration.SEMANTIC_RESULT_PATH);

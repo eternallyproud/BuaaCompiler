@@ -57,4 +57,8 @@ public class InOut {
     public static void writeIRResult(String content) {
         writeFile(Configuration.IR_RESULT_PATH, content);
     }
+
+    public static void writeAssemblyResult(String content) {
+        writeFile(Configuration.ASSEMBLY_RESULT_PATH, content);
+    }
 }
