@@ -16,7 +16,19 @@ public class Tools {
     }
 
     public static void printMessage(String message) {
-        System.out.println("\n***************" + message + "***************");
+        System.out.println("\n*************** " + message + " ***************");
+    }
+
+    public static void printOpenInfo(String info) {
+        printInfo(info + "已开启");
+    }
+
+    public static void printCloseInfo(String info) {
+        printInfo(info + "已关闭");
+    }
+
+    public static void printInfo(String info) {
+        System.out.println("\n>>> " + info);
     }
 
     public static String arrayListToString(ArrayList<?> list, String delimiter) {
@@ -87,7 +99,7 @@ public class Tools {
                 .replaceAll("\\\\0", "\0")
                 .replaceAll("\\\\", "\\");
 
-        for( char c : decodedString.toCharArray()) {
+        for (char c : decodedString.toCharArray()) {
             result.add((int) c);
         }
 

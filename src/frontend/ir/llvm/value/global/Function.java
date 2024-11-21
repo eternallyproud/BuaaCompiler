@@ -36,11 +36,12 @@ public class Function extends GlobalValue {
         basicBlocks.add(basicBlock);
     }
 
-    @Override
-    public String toString() {
-        return "define dso_local " + valueType + " " + name + "(" +
-                Tools.arrayListToString(parameters, ", ") + ") {\n" +
-                Tools.arrayListToString(basicBlocks, "\n") + "\n}";
+    public void removeBasicBlock(BasicBlock basicBlock) {
+        basicBlocks.remove(basicBlock);
+    }
+
+    public ArrayList<BasicBlock> getBasicBlocks() {
+        return basicBlocks;
     }
 
     @Override
@@ -60,5 +61,12 @@ public class Function extends GlobalValue {
         for (BasicBlock block : basicBlocks) {
             block.buildAssembly();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "define dso_local " + valueType + " " + name + "(" +
+                Tools.arrayListToString(parameters, ", ") + ") {\n" +
+                Tools.arrayListToString(basicBlocks, "\n") + "\n}";
     }
 }

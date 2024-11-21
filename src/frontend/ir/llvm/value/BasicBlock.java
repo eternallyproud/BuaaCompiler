@@ -11,6 +11,10 @@ import java.util.ArrayList;
 public class BasicBlock extends Value {
     private final ArrayList<Instruction> instructions;
 
+    //Control Flow Graph
+    private ArrayList<BasicBlock> predecessors;
+    private ArrayList<BasicBlock> successors;
+
     public BasicBlock(String name) {
         super(OtherValueType.BASIC_BLOCK, name);
         instructions = new ArrayList<>();
@@ -26,6 +30,22 @@ public class BasicBlock extends Value {
 
     public void addInstruction(Instruction instruction) {
         instructions.add(instruction);
+    }
+
+    public void setPredecessors(ArrayList<BasicBlock> predecessors) {
+        this.predecessors = predecessors;
+    }
+
+    public void removeBasicBlockFromPredecessors(BasicBlock basicBlock){
+        predecessors.remove(basicBlock);
+    }
+
+    public void setSuccessors(ArrayList<BasicBlock> successors) {
+        this.successors = successors;
+    }
+
+    public ArrayList<BasicBlock> getSuccessors() {
+        return successors;
     }
 
     @Override

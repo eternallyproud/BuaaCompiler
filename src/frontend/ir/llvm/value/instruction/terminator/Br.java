@@ -22,6 +22,14 @@ public class Br extends TerminatorInstruction {
             addUsed(elseBasicBlock);
         }
 
+        public BasicBlock getIfBasicBlock(){
+            return (BasicBlock)getUsed(1);
+        }
+
+        public BasicBlock getElseBasicBlock(){
+            return (BasicBlock)getUsed(2);
+        }
+
         @Override
         public void buildAssembly() {
             Register condRegister = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsed(0));
@@ -52,9 +60,13 @@ public class Br extends TerminatorInstruction {
 
     //br label <dest>
     public static class UnconditionalBr extends Br {
-        public UnconditionalBr(String name, BasicBlock destBlock) {
+        public UnconditionalBr(String name, BasicBlock destBasicBlock) {
             super(name);
-            addUsed(destBlock);
+            addUsed(destBasicBlock);
+        }
+
+        public BasicBlock getDestBasicBlock(){
+            return (BasicBlock)getUsed(0);
         }
 
         @Override

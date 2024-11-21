@@ -4,6 +4,7 @@ import frontend.lexer.Lexer;
 import frontend.parser.Parser;
 import frontend.ir.IRBuilder;
 import frontend.semantic.SymbolTable;
+import midend.OptimizeManager;
 import utils.InOut;
 
 public class Compiler {
@@ -30,6 +31,11 @@ public class Compiler {
         IRBuilder.IR_BUILDER.init(parser.getCompUnitNode());
         IRBuilder.IR_BUILDER.buildIR();
         IRBuilder.IR_BUILDER.writeIR();
+
+        // optimize
+        OptimizeManager.OPTIMIZE_MANAGER.init(IRBuilder.IR_BUILDER.getModule());
+        OptimizeManager.OPTIMIZE_MANAGER.optimize();
+        OptimizeManager.OPTIMIZE_MANAGER.writeOptimizedIR();
 
         // assembly
         AssemblyBuilder.ASSEMBLY_BUILDER.init(IRBuilder.IR_BUILDER.getModule());

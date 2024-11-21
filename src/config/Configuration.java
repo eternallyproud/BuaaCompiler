@@ -14,6 +14,8 @@ public class Configuration {
     public static String SEMANTIC_RESULT_PATH = "symbol.txt";
     // 中间代码输出路径
     public static String IR_RESULT_PATH = "llvm_ir.txt";
+    // 中间代码优化结果输出路径
+    public static String IR_OPTIMIZATION_RESULT_PATH = "llvm_ir_optimized.txt";
     // 汇编代码输出路径
     public static String ASSEMBLY_RESULT_PATH = "mips.txt";
     // 标准结果路径
@@ -32,4 +34,10 @@ public class Configuration {
     public static String PARAMETER_IR_PREFIX = "%param_";
     // 局部变量前缀
     public static String LOCAL_VAR_IR_PREFIX = "%local_";
+
+    /* 优化设置 */
+    // 不可达基本块删除优化
+    public static boolean REMOVE_UNREACHABLE_BASIC_BLOCK_OPTIMIZATION = false;
+    // Mem2Reg优化
+    public static boolean MEM2REG_OPTIMIZATION = true;
 }

@@ -53,6 +53,10 @@ public class Module extends Value {
         this.functions.add(function);
     }
 
+    public ArrayList<Function> getFunctions() {
+        return functions;
+    }
+
     @Override
     public void buildAssembly() {
         for (GlobalVariable globalVariable : globalVariables) {

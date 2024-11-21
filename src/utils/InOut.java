@@ -58,6 +58,10 @@ public class InOut {
         writeFile(Configuration.IR_RESULT_PATH, content);
     }
 
+    public static void writeIROptimizationResult(String content) {
+        writeFile(Configuration.IR_OPTIMIZATION_RESULT_PATH, content);
+    }
+
     public static void writeAssemblyResult(String content) {
         writeFile(Configuration.ASSEMBLY_RESULT_PATH, content);
     }
