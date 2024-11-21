@@ -36,7 +36,9 @@ public class Configuration {
     public static String LOCAL_VAR_IR_PREFIX = "%local_";
 
     /* 优化设置 */
-    // 不可达基本块删除优化
+    // 不可达指令移除优化
+    public static boolean REMOVE_UNREACHABLE_INSTRUCTION_OPTIMIZATION = false;
+    // 不可达基本块移除优化
     public static boolean REMOVE_UNREACHABLE_BASIC_BLOCK_OPTIMIZATION = false;
     // Mem2Reg优化
     public static boolean MEM2REG_OPTIMIZATION = true;

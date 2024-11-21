@@ -24,12 +24,16 @@ public class BasicBlock extends Value {
         return instructions.isEmpty();
     }
 
+    public void addInstruction(Instruction instruction) {
+        instructions.add(instruction);
+    }
+
     public Instruction getLastInstruction(){
         return instructions.get(instructions.size() - 1);
     }
 
-    public void addInstruction(Instruction instruction) {
-        instructions.add(instruction);
+    public ArrayList<Instruction> getInstructions() {
+        return instructions;
     }
 
     public void setPredecessors(ArrayList<BasicBlock> predecessors) {

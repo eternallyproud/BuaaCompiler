@@ -3,6 +3,7 @@ package midend;
 import frontend.ir.llvm.value.Module;
 import midend.optimize.RemoveUnreachableBasicBlock;
 import midend.optimize.ControlFlowGraph;
+import midend.optimize.RemoveUnreachableInstruction;
 import utils.InOut;
 import utils.Tools;
 
@@ -16,6 +17,9 @@ public class OptimizeManager {
 
     public void optimize(){
         Tools.printStartMessage("中间代码优化");
+
+        RemoveUnreachableInstruction.REMOVE_UNREACHABLE_INSTRUCTION.init(module);
+        RemoveUnreachableInstruction.REMOVE_UNREACHABLE_INSTRUCTION.optimize();
 
         ControlFlowGraph.CONTROL_FLOW_GRAPH.init(module);
         ControlFlowGraph.CONTROL_FLOW_GRAPH.build();
