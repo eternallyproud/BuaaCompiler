@@ -21,6 +21,12 @@ public class Constant extends Value {
         }
     }
 
+    public static class Undefined extends Constant {
+        public Undefined(ScalarValueType expectedType) {
+            super(expectedType, 0);
+        }
+    }
+
     @Override
     public Value convertTo(ValueType expectedValueType) {
         if (valueType == expectedValueType) {

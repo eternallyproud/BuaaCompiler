@@ -10,6 +10,7 @@ import frontend.ir.llvm.value.type.ValueType;
 import utils.Tools;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class Function extends GlobalValue {
@@ -42,6 +43,16 @@ public class Function extends GlobalValue {
 
     public ArrayList<BasicBlock> getBasicBlocks() {
         return basicBlocks;
+    }
+
+    public HashMap<BasicBlock, ArrayList<BasicBlock>> getMap(){
+        HashMap<BasicBlock, ArrayList<BasicBlock>> map = new HashMap<>();
+
+        for (BasicBlock basicBlock : basicBlocks) {
+            map.put(basicBlock, new ArrayList<>());
+        }
+
+        return map;
     }
 
     @Override

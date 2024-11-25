@@ -45,11 +45,11 @@ public class Assembly {
         }
     }
 
-    //if value is not mapped to any register, save if on stack from register
+    //if value is not mapped to any register, save it on stack from register
     public static void saveValueOnStackFromRegisterIfNotMapped(Value value, Register register) {
         if (AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(value) == null) {
             //sw
-            int offset = AssemblyBuilder.ASSEMBLY_BUILDER.assignWordOnStackTopForValue(value);
+            int offset = AssemblyBuilder.ASSEMBLY_BUILDER.assignWordOnStackTopForValueIfNotMapped(value);
             MemoryInstruction sw = new MemoryInstruction("sw", register, null, Register.SP, offset);
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sw);
         }

@@ -38,7 +38,7 @@ public class ConversionOperation extends Instruction {
         super.buildAssembly();
         switch (operator) {
             case TRUNC -> {
-                Register rs = Assembly.moveScalarValueToRegisterIfNotMapped(getUsed(0), Register.K0);
+                Register rs = Assembly.moveScalarValueToRegisterIfNotMapped(getUsedValue(0), Register.K0);
                 Register rt = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this);
                 if (rt == null) {
                     rt = Register.K0;
@@ -51,11 +51,11 @@ public class ConversionOperation extends Instruction {
                 Assembly.saveValueOnStackFromRegisterIfNotMapped(this, rt);
             }
             case ZEXT -> {
-                if (AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsed(0)) == null) {
-                    AssemblyBuilder.ASSEMBLY_BUILDER.mapValueToExistedValueOnStack(this, getUsed(0));
+                if (AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsedValue(0)) == null) {
+                    AssemblyBuilder.ASSEMBLY_BUILDER.mapValueToExistedValueOnStack(this, getUsedValue(0));
                 } else {
                     //sw
-                    Register register = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsed(0));
+                    Register register = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsedValue(0));
                     int offset = AssemblyBuilder.ASSEMBLY_BUILDER.assignWordOnStackTopForValue(this);
                     MemoryInstruction sw = new MemoryInstruction("sw", register, null, Register.SP, offset);
                     AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sw);
@@ -67,6 +67,6 @@ public class ConversionOperation extends Instruction {
     @Override
     public String toString() {
         return super.toString() + name + " = " + operator.toString().toLowerCase() + " "
-                + getUsed(0).getValueType() + " " + getUsed(0).getName() + " to " + valueType;
+                + getUsedValue(0).getValueType() + " " + getUsedValue(0).getName() + " to " + valueType;
     }
 }

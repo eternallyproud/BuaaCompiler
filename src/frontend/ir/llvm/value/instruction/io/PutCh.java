@@ -23,7 +23,7 @@ public class PutCh extends IOInstruction {
         super.buildAssembly();
 
         //move value to a0
-        Assembly.moveScalarValueToRegister(getUsed(0), Register.A0);
+        Assembly.moveScalarValueToRegister(getUsedValue(0), Register.A0);
 
         //li
         Li li = new Li(Register.V0, 11);
@@ -36,6 +36,6 @@ public class PutCh extends IOInstruction {
 
     @Override
     public String toString() {
-        return super.toString() + "call void @putch(i32 " + getUsed(0).getName() + ")";
+        return super.toString() + "call void @putch(i32 " + getUsedValue(0).getName() + ")";
     }
 }

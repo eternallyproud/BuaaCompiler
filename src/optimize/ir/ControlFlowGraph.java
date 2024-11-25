@@ -1,4 +1,4 @@
-package midend.optimize;
+package optimize.ir;
 
 import frontend.ir.llvm.value.BasicBlock;
 import frontend.ir.llvm.value.Module;
@@ -32,8 +32,8 @@ public class ControlFlowGraph {
     }
 
     private void build(Function function) {
-        HashMap<BasicBlock, ArrayList<BasicBlock>> predecessorMap = getMap(function);
-        HashMap<BasicBlock, ArrayList<BasicBlock>> successorMap = getMap(function);
+        HashMap<BasicBlock, ArrayList<BasicBlock>> predecessorMap = function.getMap();
+        HashMap<BasicBlock, ArrayList<BasicBlock>> successorMap = function.getMap();
 
         for (BasicBlock basicBlock : function.getBasicBlocks()) {
             Instruction br = basicBlock.getLastInstruction();
@@ -68,15 +68,5 @@ public class ControlFlowGraph {
             basicBlock.setPredecessors(predecessorMap.get(basicBlock));
             basicBlock.setSuccessors(successorMap.get(basicBlock));
         }
-    }
-
-    private HashMap<BasicBlock, ArrayList<BasicBlock>> getMap(Function function) {
-        HashMap<BasicBlock, ArrayList<BasicBlock>> map = new HashMap<>();
-
-        for (BasicBlock basicBlock : function.getBasicBlocks()) {
-            map.put(basicBlock, new ArrayList<>());
-        }
-
-        return map;
     }
 }

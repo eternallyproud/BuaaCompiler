@@ -9,6 +9,10 @@ public class Use {
         this.used = used;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public Value getUsed() {
         return used;
     }

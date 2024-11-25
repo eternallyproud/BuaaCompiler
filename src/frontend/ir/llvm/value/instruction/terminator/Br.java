@@ -22,17 +22,27 @@ public class Br extends TerminatorInstruction {
             addUsed(elseBasicBlock);
         }
 
-        public BasicBlock getIfBasicBlock(){
-            return (BasicBlock)getUsed(1);
+        public void setIfBasicBlock(BasicBlock ifBasicBlock) {
+            setUsed(1, ifBasicBlock);
         }
 
-        public BasicBlock getElseBasicBlock(){
-            return (BasicBlock)getUsed(2);
+        public BasicBlock getIfBasicBlock() {
+            return (BasicBlock) getUsedValue(1);
+        }
+
+        public void setElseBasicBlock(BasicBlock elseBasicBlock) {
+            setUsed(2, elseBasicBlock);
+        }
+
+        public BasicBlock getElseBasicBlock() {
+            return (BasicBlock) getUsedValue(2);
         }
 
         @Override
         public void buildAssembly() {
-            Register condRegister = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsed(0));
+            super.buildAssembly();
+
+            Register condRegister = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsedValue(0));
 
             //no corresponding register for cond value
             if (condRegister == null) {
@@ -40,21 +50,21 @@ public class Br extends TerminatorInstruction {
                 condRegister = Register.K0;
 
                 //lw
-                MemoryInstruction lw = new MemoryInstruction("lw", condRegister, null, Register.SP, AssemblyBuilder.ASSEMBLY_BUILDER.getValueStackOffset(getUsed(0)));
+                MemoryInstruction lw = new MemoryInstruction("lw", condRegister, null, Register.SP, AssemblyBuilder.ASSEMBLY_BUILDER.getValueStackOffset(getUsedValue(0)));
                 AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
             }
             //bne
-            BranchInstruction bne = new BranchInstruction("bne", condRegister, Register.ZERO, getUsed(1).getName());
+            BranchInstruction bne = new BranchInstruction("bne", condRegister, Register.ZERO, getUsedValue(1).getName());
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(bne);
 
             //j
-            JumpInstruction j = new JumpInstruction("j", getUsed(2).getName(), null);
+            JumpInstruction j = new JumpInstruction("j", getUsedValue(2).getName(), null);
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(j);
         }
 
         @Override
         public String toString() {
-            return super.toString() + "i1 " + getUsed(0).getName() + ", label %" + getUsed(1).getName() + ", label %" + getUsed(2).getName();
+            return super.toString() + "i1 " + getUsedValue(0).getName() + ", label %" + getUsedValue(1).getName() + ", label %" + getUsedValue(2).getName();
         }
     }
 
@@ -65,8 +75,8 @@ public class Br extends TerminatorInstruction {
             addUsed(destBasicBlock);
         }
 
-        public BasicBlock getDestBasicBlock(){
-            return (BasicBlock)getUsed(0);
+        public BasicBlock getDestBasicBlock() {
+            return (BasicBlock) getUsedValue(0);
         }
 
         @Override
@@ -74,13 +84,13 @@ public class Br extends TerminatorInstruction {
             super.buildAssembly();
 
             //j
-            JumpInstruction j = new JumpInstruction("j", getUsed(0).getName(), null);
+            JumpInstruction j = new JumpInstruction("j", getUsedValue(0).getName(), null);
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(j);
         }
 
         @Override
         public String toString() {
-            return super.toString() + "label %" + getUsed(0).getName();
+            return super.toString() + "label %" + getUsedValue(0).getName();
         }
     }
 

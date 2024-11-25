@@ -34,17 +34,12 @@ public class BinaryOperation extends Instruction {
     }
 
     @Override
-    public String toString() {
-        return super.toString() + name + " = " + operator.toString().toLowerCase() + " i32 " + getUsed(0).getName() + ", " + getUsed(1).getName();
-    }
-
-    @Override
     public void buildAssembly() {
         super.buildAssembly();
 
         //rs rt rd
-        Register rs = Assembly.moveScalarValueToRegisterIfNotMapped(getUsed(0), Register.K0);
-        Register rt = Assembly.moveScalarValueToRegisterIfNotMapped(getUsed(1), Register.K1);
+        Register rs = Assembly.moveScalarValueToRegisterIfNotMapped(getUsedValue(0), Register.K0);
+        Register rt = Assembly.moveScalarValueToRegisterIfNotMapped(getUsedValue(1), Register.K1);
         Register rd = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this);
         if (rd == null) {
             rd = Register.K0;
@@ -87,5 +82,10 @@ public class BinaryOperation extends Instruction {
         }
 
         Assembly.saveValueOnStackFromRegisterIfNotMapped(this, rd);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + name + " = " + operator.toString().toLowerCase() + " i32 " + getUsedValue(0).getName() + ", " + getUsedValue(1).getName();
     }
 }

@@ -24,10 +24,10 @@ public class GetElementPtr extends MemoryOperation {
         super.buildAssembly();
 
         //rs: the register containing the address of the array
-        Register rs = Assembly.movePointerValueToRegisterIfNotMapped(getUsed(0), Register.K0);
+        Register rs = Assembly.movePointerValueToRegisterIfNotMapped(getUsedValue(0), Register.K0);
 
         //rs: the register containing the offset
-        Register rt = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsed(1));
+        Register rt = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsedValue(1));
         if (rt == null) {
             rt = Register.K1;
         }
@@ -38,14 +38,14 @@ public class GetElementPtr extends MemoryOperation {
             rd = Register.K0;
         }
 
-        if (getUsed(1) instanceof Constant) {
+        if (getUsedValue(1) instanceof Constant) {
             //addi
-            ComputationalInstruction addi = new ComputationalInstruction("addi", rd, rs, Integer.parseInt(getUsed(1).getName()) * 4);
+            ComputationalInstruction addi = new ComputationalInstruction("addi", rd, rs, Integer.parseInt(getUsedValue(1).getName()) * 4);
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(addi);
         } else {
             if (rt == Register.K1) {
                 //lw
-                int offset = AssemblyBuilder.ASSEMBLY_BUILDER.assignWordOnStackTopForValueIfNotMapped(getUsed(1));
+                int offset = AssemblyBuilder.ASSEMBLY_BUILDER.assignWordOnStackTopForValueIfNotMapped(getUsedValue(1));
                 MemoryInstruction lw = new MemoryInstruction("lw", rt, null, Register.SP, offset);
                 AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
             }
@@ -62,8 +62,8 @@ public class GetElementPtr extends MemoryOperation {
 
     @Override
     public String toString() {
-        Value pointer = getUsed(0);
-        Value offset = getUsed(1);
+        Value pointer = getUsedValue(0);
+        Value offset = getUsedValue(1);
         ValueType referenceType = pointer.getValueType().getPointerReferenceValueType();
         return super.toString() + name + " = getelementptr inbounds " +
                 referenceType + ", " + pointer.getValueType() + " " + pointer.getName() + ", " +

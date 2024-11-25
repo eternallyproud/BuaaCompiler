@@ -37,9 +37,11 @@ public class Configuration {
 
     /* 优化设置 */
     // 不可达指令移除优化
-    public static boolean REMOVE_UNREACHABLE_INSTRUCTION_OPTIMIZATION = false;
+    public static boolean REMOVE_UNREACHABLE_INSTRUCTION_OPTIMIZATION = true;
     // 不可达基本块移除优化
-    public static boolean REMOVE_UNREACHABLE_BASIC_BLOCK_OPTIMIZATION = false;
+    public static boolean REMOVE_UNREACHABLE_BASIC_BLOCK_OPTIMIZATION = true;
     // Mem2Reg优化
     public static boolean MEM2REG_OPTIMIZATION = true;
+    // 死代码删除优化
+    public static boolean DELETE_DEAD_CODE_OPTIMIZATION = true;
 }

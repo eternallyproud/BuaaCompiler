@@ -8,7 +8,7 @@ import frontend.ir.llvm.value.Value;
 import frontend.ir.llvm.value.type.ScalarValueType;
 
 //<result> = icmp <cmp op> <ty> <op1>, <op2>
-public class ICmp extends OtherOperation {
+public class ICmp extends Operation {
     private enum CompareOperator {
         EQ, NE, SGT, SGE, SLT, SLE, UNDEFINED;
 
@@ -39,8 +39,8 @@ public class ICmp extends OtherOperation {
         super.buildAssembly();
 
         //rs rt rd
-        Register rs = Assembly.moveScalarValueToRegisterIfNotMapped(getUsed(0), Register.K0);
-        Register rt = Assembly.moveScalarValueToRegisterIfNotMapped(getUsed(1), Register.K1);
+        Register rs = Assembly.moveScalarValueToRegisterIfNotMapped(getUsedValue(0), Register.K0);
+        Register rt = Assembly.moveScalarValueToRegisterIfNotMapped(getUsedValue(1), Register.K1);
         Register rd = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this);
         if (rd == null) {
             rd = Register.K0;
@@ -79,6 +79,6 @@ public class ICmp extends OtherOperation {
     @Override
     public String toString() {
         return super.toString() + name + " = icmp " + operator.toString().toLowerCase() + " i32 "
-                + getUsed(0).getName() + ", " + getUsed(1).getName();
+                + getUsedValue(0).getName() + ", " + getUsedValue(1).getName();
     }
 }

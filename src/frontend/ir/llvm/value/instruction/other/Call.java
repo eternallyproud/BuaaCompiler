@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 //<result> = call <ty> <function>(<function args>)
-public class Call extends OtherOperation {
+public class Call extends Operation {
     public Call(String name, Function function, ArrayList<Value> parameters) {
         super(function.getValueType(), name);
         addUsed(function);
@@ -50,7 +50,7 @@ public class Call extends OtherOperation {
         AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sw);
 
         //store parameters
-        List<Value> parameters = getUsedList().subList(1, getUsedList().size());
+        List<Value> parameters = getUsedValueList().subList(1, getUsedValueList().size());
         for (int index = 0; index < parameters.size(); index++) {
             //first three parameters
             if (index < 3 && AssemblyBuilder.ASSEMBLY_BUILDER.memoryToRegister()) {
@@ -118,7 +118,7 @@ public class Call extends OtherOperation {
         AssemblyBuilder.ASSEMBLY_BUILDER.addToText(addi);
 
         //jal
-        JumpInstruction jal = new JumpInstruction("jal", getUsed(0).getName().substring(1), null);
+        JumpInstruction jal = new JumpInstruction("jal", getUsedValue(0).getName().substring(1), null);
         AssemblyBuilder.ASSEMBLY_BUILDER.addToText(jal);
 
         //restore ra
@@ -136,7 +136,7 @@ public class Call extends OtherOperation {
         }
 
         //store return value
-        if(getUsed(0).getValueType() != ScalarValueType.VOID) {
+        if(getUsedValue(0).getValueType() != ScalarValueType.VOID) {
             if(AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this) != null){
                 MoveInstruction move = new MoveInstruction(AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this),Register.V0 );
                 AssemblyBuilder.ASSEMBLY_BUILDER.addToText(move);
@@ -148,10 +148,10 @@ public class Call extends OtherOperation {
 
     @Override
     public String toString() {
-        String prefix = getUsed(0).getValueType() == ScalarValueType.VOID ? "" : name + " = ";
-        ArrayList<String> parameters = getUsedList().subList(1, getUsedList().size()).stream()
+        String prefix = getUsedValue(0).getValueType() == ScalarValueType.VOID ? "" : name + " = ";
+        ArrayList<String> parameters = getUsedValueList().subList(1, getUsedValueList().size()).stream()
                 .map(parameter -> parameter.getValueType() + " " + parameter.getName()).collect(Collectors.toCollection(ArrayList::new));
-        return super.toString() + prefix + "call " + getUsed(0).getValueType() + " "
-                + getUsed(0).getName() + "(" + String.join(", ", parameters) + ")";
+        return super.toString() + prefix + "call " + getUsedValue(0).getValueType() + " "
+                + getUsedValue(0).getName() + "(" + String.join(", ", parameters) + ")";
     }
 }

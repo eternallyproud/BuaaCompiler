@@ -30,9 +30,9 @@ public class Ret extends TerminatorInstruction {
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(j);
         } else {
             //char or int
-            if (getUsed(0) != null) {
+            if (getUsedValue(0) != null) {
                 //move value to v0
-                Assembly.moveScalarValueToRegister(getUsed(0), Register.V0);
+                Assembly.moveScalarValueToRegister(getUsedValue(0), Register.V0);
             }
 
             //jr
@@ -43,7 +43,7 @@ public class Ret extends TerminatorInstruction {
 
     @Override
     public String toString() {
-        String retString = getUsed(0) == null ? "void" : getUsed(0).getValueType() + " " + getUsed(0).getName();
+        String retString = getUsedValue(0) == null ? "void" : getUsedValue(0).getValueType() + " " + getUsedValue(0).getName();
         return super.toString() + "ret " + retString;
     }
 }

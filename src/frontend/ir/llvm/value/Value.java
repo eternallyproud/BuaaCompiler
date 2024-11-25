@@ -28,6 +28,31 @@ public class Value {
         return name;
     }
 
+    public void addUser(User user) {
+        userList.add(new Use(user, this));
+    }
+
+    public void removeUser(User user) {
+        for (Use use : userList) {
+            if (use.getUser().equals(user)) {
+                userList.remove(use);
+                break;
+            }
+        }
+    }
+
+    public void updateAllUsers(Value newUsed) {
+        //update all users which used this value
+        ArrayList<Use> userList = new ArrayList<>(this.userList);
+        for (Use use : userList) {
+            use.getUser().updateUsed(this, newUsed);
+        }
+    }
+
+    public ArrayList<Use> getUserList() {
+        return userList;
+    }
+
     public Value convertTo(ValueType expectedValueType) {
         if ((expectedValueType instanceof ScalarValueType) && (!this.valueType.equals(expectedValueType))) {
             ConversionOperation conversionOperation = new ConversionOperation(expectedValueType, IRBuilder.IR_BUILDER.getLocalVarName(), this);
@@ -37,6 +62,6 @@ public class Value {
         return this;
     }
 
-    public void buildAssembly(){
+    public void buildAssembly() {
     }
 }

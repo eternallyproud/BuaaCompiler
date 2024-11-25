@@ -1,4 +1,4 @@
-package midend.optimize;
+package optimize.ir;
 
 import config.Configuration;
 import frontend.ir.llvm.value.BasicBlock;

@@ -19,7 +19,7 @@ public class Load extends MemoryOperation {
         super.buildAssembly();
 
         //rs: the register containing the address to lw from
-        Register rs = Assembly.movePointerValueToRegisterIfNotMapped(getUsed(0), Register.K0);
+        Register rs = Assembly.movePointerValueToRegisterIfNotMapped(getUsedValue(0), Register.K0);
 
         //rt: the register to lw to
         Register rt = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this);
@@ -37,6 +37,6 @@ public class Load extends MemoryOperation {
     @Override
     public String toString() {
         return super.toString() + name + " = load " + valueType + ", "
-                + getUsed(0).getValueType() + " " + getUsed(0).getName();
+                + getUsedValue(0).getValueType() + " " + getUsedValue(0).getName();
     }
 }

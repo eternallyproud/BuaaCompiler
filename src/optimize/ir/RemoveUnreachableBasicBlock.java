@@ -1,9 +1,10 @@
-package midend.optimize;
+package optimize.ir;
 
 import config.Configuration;
 import frontend.ir.llvm.value.BasicBlock;
 import frontend.ir.llvm.value.Module;
 import frontend.ir.llvm.value.global.Function;
+import frontend.ir.llvm.value.instruction.Instruction;
 import utils.Tools;
 
 import java.util.HashMap;
@@ -44,6 +45,11 @@ public class RemoveUnreachableBasicBlock {
                 //remove basicBlock from predecessors of its successors
                 for (BasicBlock successorBasicBlock : basicBlock.getSuccessors()) {
                     successorBasicBlock.removeBasicBlockFromPredecessors(basicBlock);
+                }
+
+                //remove user-used relation
+                for(Instruction instruction : basicBlock.getInstructions()){
+                    instruction.removeAllUse();
                 }
 
                 //remove basicBlock from function

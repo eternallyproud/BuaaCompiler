@@ -22,24 +22,24 @@ public class Store extends MemoryOperation {
         super.buildAssembly();
 
         //rt: the register to sw from
-        Register rt = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this.getUsed(0));
+        Register rt = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this.getUsedValue(0));
         if (rt == null) {
             rt = Register.K0;
         }
 
-        if (getUsed(0) instanceof Constant) {
+        if (getUsedValue(0) instanceof Constant) {
             //li
-            Li li = new Li(rt, Integer.parseInt(getUsed(0).getName()));
+            Li li = new Li(rt, Integer.parseInt(getUsedValue(0).getName()));
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(li);
         } else if (rt == Register.K0) {
             //lw
-            int offset = AssemblyBuilder.ASSEMBLY_BUILDER.assignWordOnStackTopForValueIfNotMapped(getUsed(0));
+            int offset = AssemblyBuilder.ASSEMBLY_BUILDER.assignWordOnStackTopForValueIfNotMapped(getUsedValue(0));
             MemoryInstruction lw = new MemoryInstruction("lw", rt, null, Register.SP, offset);
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
         }
 
         //base: the register containing the address to sw to
-        Register base = Assembly.movePointerValueToRegisterIfNotMapped(this.getUsed(1), Register.K1);
+        Register base = Assembly.movePointerValueToRegisterIfNotMapped(this.getUsedValue(1), Register.K1);
 
         //sw
         MemoryInstruction sw = new MemoryInstruction("sw", rt, null, base, 0);
@@ -49,7 +49,7 @@ public class Store extends MemoryOperation {
     @Override
     public String toString() {
         return super.toString() + "store "
-                + getUsed(0).getValueType() + " " + getUsed(0).getName() + ", "
-                + getUsed(1).getValueType() + " " + getUsed(1).getName();
+                + getUsedValue(0).getValueType() + " " + getUsedValue(0).getName() + ", "
+                + getUsedValue(1).getValueType() + " " + getUsedValue(1).getName();
     }
 }
