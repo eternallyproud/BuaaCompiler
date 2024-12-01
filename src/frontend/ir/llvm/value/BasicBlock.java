@@ -24,6 +24,12 @@ public class BasicBlock extends Value {
     private ArrayList<BasicBlock> son;
     private ArrayList<BasicBlock> dominanceFrontier;
 
+    //Live Variable Analysis
+    private ArrayList<Value> def;
+    private ArrayList<Value> use;
+    private ArrayList<Value> in;
+    private ArrayList<Value> out;
+
     public BasicBlock(String name) {
         super(OtherValueType.BASIC_BLOCK, name);
         instructions = new ArrayList<>();
@@ -143,6 +149,46 @@ public class BasicBlock extends Value {
 
     public ArrayList<BasicBlock> getDominanceFrontier() {
         return dominanceFrontier;
+    }
+
+    public void analyzeDefUse(){
+        def = new ArrayList<>();
+        use = new ArrayList<>();
+
+        for (Instruction instruction : instructions) {
+            for(Value usedValue : instruction.getUsedValueList()){
+                if(!def.contains(usedValue) && !(usedValue instanceof Constant)){
+                    use.add(usedValue);
+                }
+            }
+            if(!use.contains(instruction)&&instruction.usable()){
+                def.add(instruction);
+            }
+        }
+    }
+
+    public ArrayList<Value> getDef() {
+        return def;
+    }
+
+    public ArrayList<Value> getUse() {
+        return use;
+    }
+
+    public void setIn(ArrayList<Value> in) {
+        this.in = in;
+    }
+
+    public ArrayList<Value> getIn() {
+        return in;
+    }
+
+    public void setOut(ArrayList<Value> out) {
+        this.out = out;
+    }
+
+    public ArrayList<Value> getOut() {
+        return out;
     }
 
     @Override

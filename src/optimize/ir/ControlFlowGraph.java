@@ -32,8 +32,8 @@ public class ControlFlowGraph {
     }
 
     private void build(Function function) {
-        HashMap<BasicBlock, ArrayList<BasicBlock>> predecessorMap = function.getMap();
-        HashMap<BasicBlock, ArrayList<BasicBlock>> successorMap = function.getMap();
+        HashMap<BasicBlock, ArrayList<BasicBlock>> predecessorMap = function.getMap(ArrayList::new);
+        HashMap<BasicBlock, ArrayList<BasicBlock>> successorMap = function.getMap(ArrayList::new);
 
         for (BasicBlock basicBlock : function.getBasicBlocks()) {
             Instruction br = basicBlock.getLastInstruction();

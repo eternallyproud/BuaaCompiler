@@ -5,17 +5,20 @@ import backend.Register;
 import backend.assembly.Label;
 import frontend.ir.llvm.value.BasicBlock;
 import frontend.ir.llvm.value.Parameter;
+import frontend.ir.llvm.value.Value;
 import frontend.ir.llvm.value.type.ScalarValueType;
 import frontend.ir.llvm.value.type.ValueType;
 import utils.Tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class Function extends GlobalValue {
     private final ArrayList<Parameter> parameters;
     private final ArrayList<BasicBlock> basicBlocks;
+    private HashMap<Value, Register> valueToRegister;
 
     public Function(String name, String cType) {
         super(ScalarValueType.getByCType(cType), name);
@@ -45,11 +48,19 @@ public class Function extends GlobalValue {
         return basicBlocks;
     }
 
-    public HashMap<BasicBlock, ArrayList<BasicBlock>> getMap(){
-        HashMap<BasicBlock, ArrayList<BasicBlock>> map = new HashMap<>();
+    public void setValueToRegister(HashMap<Value, Register> valueToRegister) {
+        this.valueToRegister = valueToRegister;
+    }
+
+    public HashMap<Value, Register> getValueToRegister() {
+        return valueToRegister;
+    }
+
+    public <C> HashMap<BasicBlock, C> getMap(Supplier<C> collectionSupplier) {
+        HashMap<BasicBlock, C> map = new HashMap<>();
 
         for (BasicBlock basicBlock : basicBlocks) {
-            map.put(basicBlock, new ArrayList<>());
+            map.put(basicBlock, collectionSupplier.get());
         }
 
         return map;
@@ -59,7 +70,7 @@ public class Function extends GlobalValue {
     public void buildAssembly() {
         AssemblyBuilder.ASSEMBLY_BUILDER.addToText(new Label(name.substring(1)));
 
-        AssemblyBuilder.ASSEMBLY_BUILDER.enterFunction();
+        AssemblyBuilder.ASSEMBLY_BUILDER.enterFunction(valueToRegister);
 
         for (int i = 0; i < parameters.size(); i++) {
             if (i < 3) {

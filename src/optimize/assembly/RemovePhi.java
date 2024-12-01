@@ -1,5 +1,6 @@
 package optimize.assembly;
 
+import backend.Register;
 import config.Configuration;
 import frontend.ir.IRBuilder;
 import frontend.ir.llvm.value.BasicBlock;
@@ -15,6 +16,7 @@ import frontend.ir.llvm.value.instruction.terminator.Br;
 import utils.Tools;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RemovePhi {
@@ -158,6 +160,41 @@ public class RemovePhi {
         for (int i = 0; i < phiList.size(); i++) {
             Move move = new Move(IRBuilder.IR_BUILDER.getLocalVarName(function), phiList.get(i), sourceValueList.get(i));
             moveList.add(move);
+        }
+
+        ArrayList<Move> tempMoveList = new ArrayList<>();
+        ArrayList<Value> tempValueList = new ArrayList<>();
+
+        HashMap<Value, Register> valueToRegister = function.getValueToRegister();
+
+        for (int i = moveList.size() - 1; i >= 0; i--) {
+            Value sourceValue = moveList.get(i).getUsedValue(1);
+            if (!tempValueList.contains(sourceValue) && !(sourceValue instanceof Constant)) {
+                boolean registerConflict = false;
+                for (int j = 0; j < i; j++) {
+                    if (valueToRegister != null && valueToRegister.get(sourceValue) != null &&
+                            valueToRegister.get(moveList.get(j).getUsedValue(0)) == valueToRegister.get(sourceValue)) {
+                        registerConflict = true;
+                        break;
+                    }
+                }
+                if (registerConflict) {
+                    Value tempValue = new Value(sourceValue.getValueType(), IRBuilder.IR_BUILDER.getLocalVarName(function));
+                    for (Move move : moveList) {
+                        if (move.getUsedValue(1).equals(sourceValue)) {
+                            move.setFromValue(tempValue);
+                        }
+                    }
+                    Move move = new Move(IRBuilder.IR_BUILDER.getLocalVarName(function), tempValue, sourceValue);
+                    move.setFatherBasicBlock(basicBlock);
+                    tempMoveList.add(move);
+                }
+                tempValueList.add(sourceValue);
+            }
+        }
+
+        for (Move move : tempMoveList) {
+            moveList.add(0, move);
         }
 
         for (Move move : moveList) {

@@ -65,7 +65,7 @@ public class Dominance {
 
     private void buildImmediateDominance(Function function) {
         HashMap<BasicBlock, BasicBlock> father = new HashMap<>();
-        HashMap<BasicBlock, ArrayList<BasicBlock>> son = function.getMap();
+        HashMap<BasicBlock, ArrayList<BasicBlock>> son = function.getMap(ArrayList::new);
 
         for (BasicBlock dominatorBasicBlock : function.getBasicBlocks()) {
             for (BasicBlock dominatedBasicBlock : dominatorBasicBlock.getDominated()) {
@@ -83,7 +83,7 @@ public class Dominance {
     }
 
     private void buildDominanceFrontier(Function function) {
-        HashMap<BasicBlock, ArrayList<BasicBlock>> dominanceFrontier = function.getMap();
+        HashMap<BasicBlock, ArrayList<BasicBlock>> dominanceFrontier = function.getMap(ArrayList::new);
 
         for(BasicBlock basicBlock : function.getBasicBlocks()){
             for(BasicBlock successorBasicBlock : basicBlock.getSuccessors()){

@@ -38,6 +38,8 @@ public class GetElementPtr extends MemoryOperation {
             rd = Register.K0;
         }
 
+        Register temp = Register.K1;
+
         if (getUsedValue(1) instanceof Constant) {
             //addi
             ComputationalInstruction addi = new ComputationalInstruction("addi", rd, rs, Integer.parseInt(getUsedValue(1).getName()) * 4);
@@ -50,11 +52,11 @@ public class GetElementPtr extends MemoryOperation {
                 AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
             }
             //sll (mult 4)
-            ComputationalInstruction sll = new ComputationalInstruction("sll", rt, rt, 2);
+            ComputationalInstruction sll = new ComputationalInstruction("sll", temp, rt, 2);
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sll);
 
             //addu
-            ComputationalInstruction addu = new ComputationalInstruction("addu", rd, rs, rt);
+            ComputationalInstruction addu = new ComputationalInstruction("addu", rd, rs, temp);
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(addu);
         }
         Assembly.saveValueOnStackFromRegisterIfNotMapped(this, rd);

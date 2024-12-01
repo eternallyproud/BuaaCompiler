@@ -9,6 +9,7 @@ import utils.Tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class AssemblyBuilder {
     public final static AssemblyBuilder ASSEMBLY_BUILDER = new AssemblyBuilder();
@@ -16,6 +17,7 @@ public class AssemblyBuilder {
     private final AssemblyRecord assemblyRecord;
     private int currentStackOffset;
     private HashMap<Value, Integer> currentValueMap;
+    private HashMap<Value, Register> valueToRegister;
 
     private AssemblyBuilder() {
         this.assemblyRecord = new AssemblyRecord();
@@ -43,9 +45,10 @@ public class AssemblyBuilder {
         assemblyRecord.addToText(assembly);
     }
 
-    public void enterFunction() {
+    public void enterFunction(HashMap<Value, Register> valueToRegister) {
         currentStackOffset = 0;
         currentValueMap = new HashMap<>();
+        this.valueToRegister = valueToRegister;
     }
 
     //alloc a word on stack top for value, if value is not mapped
@@ -75,7 +78,7 @@ public class AssemblyBuilder {
         return currentStackOffset;
     }
 
-    public int getStackOffset(){
+    public int getStackOffset() {
         return currentStackOffset;
     }
 
@@ -91,19 +94,29 @@ public class AssemblyBuilder {
         return currentValueMap.get(value);
     }
 
-    public boolean memoryToRegister(){
-        return false;
+    public boolean memoryToRegister() {
+        return valueToRegister != null;
     }
 
-    public void allocRegisterForValue(Value ignoredValue, Register ignoredRegister) {
+    public void allocRegisterForValue(Value value, Register register) {
+        if (valueToRegister == null) {
+            return;
+        }
+        valueToRegister.put(value, register);
     }
 
-    public Register getRegisterOfValue(Value ignoredValue) {
-        return null;
+    public Register getRegisterOfValue(Value value) {
+        if (valueToRegister == null) {
+            return null;
+        }
+        return valueToRegister.get(value);
     }
 
-    public ArrayList<Register> getMappedRegisters(){
-        return new ArrayList<>();
+    public ArrayList<Register> getMappedRegisters() {
+        if (valueToRegister == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(new HashSet<>(valueToRegister.values()));
     }
 
     public void writeAssembly() {

@@ -33,6 +33,10 @@ public class ConversionOperation extends Instruction {
         operator = ConversionOperator.getByValueType(operand.getValueType(), valueType);
     }
 
+    public boolean isZext(){
+        return operator == ConversionOperator.ZEXT;
+    }
+
     @Override
     public void buildAssembly() {
         super.buildAssembly();

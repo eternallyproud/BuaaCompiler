@@ -8,10 +8,14 @@ import frontend.ir.llvm.value.instruction.Instruction;
 import frontend.ir.llvm.value.type.ScalarValueType;
 
 public class Move extends Instruction {
-    public Move(String name, Value fromValue, Value toValue) {
+    public Move(String name, Value toValue, Value fromValue) {
         super(ScalarValueType.VOID,name);
-        addUsed(fromValue);
         addUsed(toValue);
+        addUsed(fromValue);
+    }
+
+    public void setFromValue(Value fromValue){
+        updateUsed(getUsedValue(1), fromValue);
     }
 
     @Override
@@ -23,8 +27,8 @@ public class Move extends Instruction {
     public void buildAssembly() {
         super.buildAssembly();
 
-        Register rs = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsedValue(0));
-        Register rt = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsedValue(1));
+        Register rt = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsedValue(0));
+        Register rs = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(getUsedValue(1));
         if(rs != null && rs == rt){
             return;
         }

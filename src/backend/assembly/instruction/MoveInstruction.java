@@ -40,7 +40,7 @@ public class MoveInstruction extends Instruction {
         if (rs == null) {
             return super.toString() + operator + " " + rd;
         } else {
-            return super.toString() + operator + rd + ", " + rs;
+            return super.toString() + operator + " " + rd + ", " + rs;
         }
     }
 }

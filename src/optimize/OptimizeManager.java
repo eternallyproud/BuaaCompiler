@@ -2,10 +2,12 @@ package optimize;
 
 import error.ErrorHandler;
 import frontend.ir.llvm.value.Module;
+import optimize.assembly.GraphColoringRegisterAllocation;
 import optimize.assembly.RemovePhi;
 import optimize.ir.ControlFlowGraph;
 import optimize.ir.DeleteDeadCode;
 import optimize.ir.Dominance;
+import optimize.ir.LiveVariableAnalysis;
 import optimize.ir.Mem2Reg;
 import optimize.ir.RemoveUnreachableBasicBlock;
 import optimize.ir.RemoveUnreachableInstruction;
@@ -57,6 +59,12 @@ public class OptimizeManager {
             Tools.printFailMessage("汇编代码优化");
         }else{
             Tools.printStartMessage("汇编代码优化");
+
+            LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.init(module);
+            LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.analyze();
+
+            GraphColoringRegisterAllocation.GRAPH_COLORING_REGISTER_ALLOCATION.init(module);
+            GraphColoringRegisterAllocation.GRAPH_COLORING_REGISTER_ALLOCATION.optimize();
 
             RemovePhi.REMOVE_PHI.init(module);
             RemovePhi.REMOVE_PHI.build();
