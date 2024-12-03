@@ -22,6 +22,17 @@ public class BinaryOperation extends Instruction {
                 default -> UNDEFINED;
             };
         }
+
+        private String getString(){
+            return switch (this) {
+                case ADD -> "+";
+                case SUB -> "-";
+                case MUL -> "*";
+                case SDIV -> "/";
+                case SREM -> "%";
+                default -> "";
+            };
+        }
     }
 
     private final BinaryOperator operator;
@@ -31,6 +42,10 @@ public class BinaryOperation extends Instruction {
         this.operator = BinaryOperator.getBySymbol(symbol);
         addUsed(operand1);
         addUsed(operand2);
+    }
+    
+    public String getOperator(){
+        return operator.getString();
     }
 
     @Override

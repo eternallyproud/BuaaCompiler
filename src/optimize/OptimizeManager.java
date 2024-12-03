@@ -1,9 +1,11 @@
 package optimize;
 
+import config.Configuration;
 import error.ErrorHandler;
 import frontend.ir.llvm.value.Module;
 import optimize.assembly.GraphColoringRegisterAllocation;
 import optimize.assembly.RemovePhi;
+import optimize.ir.ConstantFolding;
 import optimize.ir.ControlFlowGraph;
 import optimize.ir.DeleteDeadCode;
 import optimize.ir.Dominance;
@@ -45,14 +47,35 @@ public class OptimizeManager {
             Mem2Reg.MEM2REG.init(module);
             Mem2Reg.MEM2REG.optimize();
 
-            DeleteDeadCode.DELETE_DEAD_CODE.init(module);
-            DeleteDeadCode.DELETE_DEAD_CODE.optimize();
+            DeleteDeadCode.DELETE_DEAD_CODE.optimize(module);
 
-            RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.init(module);
-            RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize();
+            RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize(module);
 
-            GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.init(module);
-            GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize();
+            GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize(module);
+
+            ConstantFolding.CONSTANT_FOLDING.optimize(module);
+
+            boolean hasChanged = true;
+            while(hasChanged && Configuration.MULTI_ROUND_OPTIMIZATION) {
+                hasChanged = false;
+                module.clear();
+
+                if(DeleteDeadCode.DELETE_DEAD_CODE.optimize()){
+                    hasChanged = true;
+                }
+
+                if(RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize()){
+                    hasChanged = true;
+                }
+
+                if(GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize()){
+                    hasChanged = true;
+                }
+
+                if(ConstantFolding.CONSTANT_FOLDING.optimize()){
+                    hasChanged = true;
+                }
+            }
 
             Tools.printEndMessage("中间代码优化");
         }

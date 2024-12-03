@@ -99,6 +99,10 @@ public class Function extends GlobalValue {
         return canBeNumbered;
     }
 
+    public void clear(){
+        canBeNumbered = null;
+    }
+
     @Override
     public void buildAssembly() {
         AssemblyBuilder.ASSEMBLY_BUILDER.addToText(new Label(name.substring(1)));

@@ -21,6 +21,12 @@ public class Constant extends Value {
         }
     }
 
+    public static class Bool extends Constant {
+        public Bool(boolean objectValue) {
+            super(ScalarValueType.INT1, objectValue ? 1 : 0);
+        }
+    }
+
     public static class Undefined extends Constant {
         public Undefined(ScalarValueType expectedType) {
             super(expectedType, 0);

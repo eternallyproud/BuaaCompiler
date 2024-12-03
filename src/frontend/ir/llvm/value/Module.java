@@ -57,6 +57,12 @@ public class Module extends Value {
         return functions;
     }
 
+    public void clear(){
+        for (Function function : functions) {
+            function.clear();
+        }
+    }
+
     @Override
     public void buildAssembly() {
         for (GlobalVariable globalVariable : globalVariables) {

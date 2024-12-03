@@ -4,8 +4,10 @@ import backend.AssemblyBuilder;
 import backend.Register;
 import backend.assembly.instruction.BranchInstruction;
 import backend.assembly.instruction.JumpInstruction;
+import backend.assembly.instruction.Li;
 import backend.assembly.instruction.MemoryInstruction;
 import frontend.ir.llvm.value.BasicBlock;
+import frontend.ir.llvm.value.Constant;
 import frontend.ir.llvm.value.Value;
 
 public class Br extends TerminatorInstruction {
@@ -49,9 +51,15 @@ public class Br extends TerminatorInstruction {
                 //k0 is unused
                 condRegister = Register.K0;
 
-                //lw
-                MemoryInstruction lw = new MemoryInstruction("lw", condRegister, null, Register.SP, AssemblyBuilder.ASSEMBLY_BUILDER.getValueStackOffset(getUsedValue(0)));
-                AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
+                if (getUsedValue(0) instanceof Constant constant) {
+                    //li
+                    Li li = new Li(condRegister, Integer.parseInt(constant.getName()));
+                    AssemblyBuilder.ASSEMBLY_BUILDER.addToText(li);
+                } else {
+                    //lw
+                    MemoryInstruction lw = new MemoryInstruction("lw", condRegister, null, Register.SP, AssemblyBuilder.ASSEMBLY_BUILDER.getValueStackOffset(getUsedValue(0)));
+                    AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
+                }
             }
             //bne
             BranchInstruction bne = new BranchInstruction("bne", condRegister, Register.ZERO, getUsedValue(1).getName());

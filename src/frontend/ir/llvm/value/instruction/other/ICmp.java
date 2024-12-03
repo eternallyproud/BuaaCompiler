@@ -23,6 +23,18 @@ public class ICmp extends Operation {
                 default -> UNDEFINED;
             };
         }
+
+        private String getString() {
+            return switch (this) {
+                case EQ -> "==";
+                case NE -> "!=";
+                case SGT -> ">";
+                case SGE -> ">=";
+                case SLT -> "<";
+                case SLE -> "<=";
+                default -> "";
+            };
+        }
     }
 
     private final CompareOperator operator;
@@ -32,6 +44,10 @@ public class ICmp extends Operation {
         operator = CompareOperator.getBySymbol(symbol);
         addUsed(operand1);
         addUsed(operand2);
+    }
+
+    public String getOperator(){
+        return operator.getString();
     }
 
     @Override

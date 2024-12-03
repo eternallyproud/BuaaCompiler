@@ -13,25 +13,35 @@ import java.util.ArrayList;
 
 public class RemoveRedundantInstruction {
     public final static RemoveRedundantInstruction REMOVE_REDUNDANT_INSTRUCTION = new RemoveRedundantInstruction();
+
     private Module module;
+    private boolean hasChanged;
 
     private RemoveRedundantInstruction() {
     }
 
-    public void init(Module module) {
+    public void optimize(Module module){
         this.module = module;
+        printInfo();
+        optimize();
     }
 
-    public void optimize() {
+    public void printInfo(){
         if (Configuration.REMOVE_REDUNDANT_INSTRUCTION_OPTIMIZATION) {
             Tools.printOpenInfo("多余指令移除优化");
-
-            for (Function function : module.getFunctions()) {
-                optimize(function);
-            }
         } else {
             Tools.printCloseInfo("多余指令移除优化");
         }
+    }
+
+    public boolean optimize() {
+        hasChanged = false;
+        if (Configuration.REMOVE_REDUNDANT_INSTRUCTION_OPTIMIZATION) {
+            for (Function function : module.getFunctions()) {
+                optimize(function);
+            }
+        }
+        return hasChanged;
     }
 
     private void optimize(Function function) {
@@ -52,6 +62,7 @@ public class RemoveRedundantInstruction {
                             conversionOperation.removeAllUse();
                             basicBlock.removeInstruction(conversionOperation);
                             hasChanged = true;
+                            this.hasChanged = true;
                         }
                     }
                 }
@@ -77,6 +88,7 @@ public class RemoveRedundantInstruction {
                             basicBlock.removeInstruction(conversionOperation2);
                             i++;
                             hasChanged = true;
+                            this.hasChanged = true;
                         }
                     }
                 }
