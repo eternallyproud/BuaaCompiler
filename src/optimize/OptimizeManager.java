@@ -8,6 +8,7 @@ import optimize.ir.ControlFlowGraph;
 import optimize.ir.DeleteDeadCode;
 import optimize.ir.Dominance;
 import optimize.assembly.LiveVariableAnalysis;
+import optimize.ir.GlobalVariableNumbering;
 import optimize.ir.Mem2Reg;
 import optimize.ir.RemoveRedundantInstruction;
 import optimize.ir.RemoveUnreachableBasicBlock;
@@ -49,6 +50,9 @@ public class OptimizeManager {
 
             RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.init(module);
             RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize();
+
+            GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.init(module);
+            GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize();
 
             Tools.printEndMessage("中间代码优化");
         }

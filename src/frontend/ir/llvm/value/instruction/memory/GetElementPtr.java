@@ -20,6 +20,11 @@ public class GetElementPtr extends MemoryOperation {
     }
 
     @Override
+    public String hash() {
+        return getUsedValue(0).getName() + " " + getUsedValue(1).getName();
+    }
+
+    @Override
     public void buildAssembly() {
         super.buildAssembly();
 

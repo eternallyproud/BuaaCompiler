@@ -44,6 +44,8 @@ public class Configuration {
     public static boolean MEM2REG_OPTIMIZATION = true;
     // 死代码删除优化
     public static boolean DELETE_DEAD_CODE_OPTIMIZATION = true;
+    // 全局变量编号优化
+    public static boolean GLOBAL_VARIABLE_NUMBERING_OPTIMIZATION = true;
     // 多余指令移除优化
     public static boolean REMOVE_REDUNDANT_INSTRUCTION_OPTIMIZATION = true;
     // 图着色寄存器分配优化

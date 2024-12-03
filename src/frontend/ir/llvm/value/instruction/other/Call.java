@@ -28,6 +28,15 @@ public class Call extends Operation {
         }
     }
 
+    public Function getFunction() {
+        return (Function) getUsedValueList().get(0);
+    }
+
+    @Override
+    public String hash() {
+        return getUsedValue(0).getName() + " " + getUsedValueList().subList(1, getUsedValueList().size()).stream().map(value -> getName()).collect(Collectors.joining(" "));
+    }
+
     @Override
     public void buildAssembly() {
         super.buildAssembly();
@@ -131,16 +140,16 @@ public class Call extends Operation {
 
         //restore registers
         for (int index = 0; index < mappedRegisters.size(); ++index) {
-            lw = new MemoryInstruction("lw", mappedRegisters.get(index), null, Register.SP, stackOffset -  4 * (index + 1));
+            lw = new MemoryInstruction("lw", mappedRegisters.get(index), null, Register.SP, stackOffset - 4 * (index + 1));
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
         }
 
         //store return value
-        if(getUsedValue(0).getValueType() != ScalarValueType.VOID) {
-            if(AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this) != null){
-                MoveInstruction move = new MoveInstruction(AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this),Register.V0 );
+        if (getUsedValue(0).getValueType() != ScalarValueType.VOID) {
+            if (AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this) != null) {
+                MoveInstruction move = new MoveInstruction(AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this), Register.V0);
                 AssemblyBuilder.ASSEMBLY_BUILDER.addToText(move);
-            }else{
+            } else {
                 Assembly.saveValueOnStackFromRegisterIfNotMapped(this, Register.V0);
             }
         }

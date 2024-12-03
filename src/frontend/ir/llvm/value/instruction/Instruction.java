@@ -43,6 +43,10 @@ public class Instruction extends User {
         return valueType != ScalarValueType.VOID;
     }
 
+    public String hash(){
+        return "";
+    }
+
     @Override
     public void buildAssembly() {
         //comment

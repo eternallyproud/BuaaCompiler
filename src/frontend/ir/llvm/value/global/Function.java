@@ -6,6 +6,10 @@ import backend.assembly.Label;
 import frontend.ir.llvm.value.BasicBlock;
 import frontend.ir.llvm.value.Parameter;
 import frontend.ir.llvm.value.Value;
+import frontend.ir.llvm.value.instruction.Instruction;
+import frontend.ir.llvm.value.instruction.io.IOInstruction;
+import frontend.ir.llvm.value.instruction.other.Call;
+import frontend.ir.llvm.value.type.PointerValueType;
 import frontend.ir.llvm.value.type.ScalarValueType;
 import frontend.ir.llvm.value.type.ValueType;
 import utils.Tools;
@@ -19,6 +23,7 @@ public class Function extends GlobalValue {
     private final ArrayList<Parameter> parameters;
     private final ArrayList<BasicBlock> basicBlocks;
     private HashMap<Value, Register> valueToRegister;
+    private Boolean canBeNumbered;
 
     public Function(String name, String cType) {
         super(ScalarValueType.getByCType(cType), name);
@@ -64,6 +69,34 @@ public class Function extends GlobalValue {
         }
 
         return map;
+    }
+
+    public boolean canBeNumbered() {
+        if (canBeNumbered != null) {
+            return canBeNumbered;
+        }
+        for (Parameter param : parameters) {
+            if (param.getValueType() instanceof PointerValueType) {
+                canBeNumbered = false;
+                return canBeNumbered;
+            }
+        }
+        for (BasicBlock basicBlock : basicBlocks) {
+            for (Instruction instruction : basicBlock.getInstructions()) {
+                if (instruction instanceof Call || instruction instanceof IOInstruction) {
+                    canBeNumbered = false;
+                    return canBeNumbered;
+                }
+                for (Value operand : instruction.getUsedValueList()) {
+                    if (operand instanceof GlobalValue) {
+                        canBeNumbered = false;
+                        return canBeNumbered;
+                    }
+                }
+            }
+        }
+        canBeNumbered = true;
+        return canBeNumbered;
     }
 
     @Override

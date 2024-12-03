@@ -38,6 +38,11 @@ public class ConversionOperation extends Instruction {
     }
 
     @Override
+    public String hash() {
+        return operator.toString().toLowerCase() + " " + valueType + " " + getUsedValue(0).getName();
+    }
+
+    @Override
     public void buildAssembly() {
         super.buildAssembly();
         switch (operator) {

@@ -34,6 +34,11 @@ public class BinaryOperation extends Instruction {
     }
 
     @Override
+    public String hash() {
+        return operator.toString().toLowerCase() + " " + getUsedValue(0).getName() + " " + getUsedValue(1).getName();
+    }
+
+    @Override
     public void buildAssembly() {
         super.buildAssembly();
 
