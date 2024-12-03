@@ -1,6 +1,7 @@
 package frontend.parser.node;
 
 import frontend.ir.IRBuilder;
+import frontend.ir.llvm.value.Constant;
 import frontend.ir.llvm.value.Value;
 import frontend.ir.llvm.value.instruction.BinaryOperation;
 import frontend.ir.llvm.value.instruction.Instruction;
@@ -27,24 +28,29 @@ public class MulExpNode extends Node {
         return unaryExpNode.getDataType();
     }
 
-    public int calculateValue() {
+    public Integer tryCalculateValue() {
         //<UnaryExp>
         if (mulExpNode == null) {
-            return unaryExpNode.calculateValue();
+            return unaryExpNode.tryCalculateValue();
         }
         //<MulExp> ('*' | '/' | '%') <UnaryExp>
         else {
+            Integer operand1 = mulExpNode.tryCalculateValue();
+            Integer operand2 = unaryExpNode.tryCalculateValue();
+            if (operand1 == null || operand2 == null) {
+                return null;
+            }
             //'*'
             if(mulToken.getType() == TokenType.MULT) {
-                return mulExpNode.calculateValue() * unaryExpNode.calculateValue();
+                return operand1 * operand2;
             }
             //'/'
             else if(mulToken.getType() == TokenType.DIV) {
-                return mulExpNode.calculateValue() / unaryExpNode.calculateValue();
+                return operand1 / operand2;
             }
             //'%'
             else {
-                return mulExpNode.calculateValue() % unaryExpNode.calculateValue();
+                return operand1 % operand2;
             }
         }
     }
@@ -64,6 +70,10 @@ public class MulExpNode extends Node {
 
     @Override
     public Value buildIR() {
+        if(tryCalculateValue()!=null){
+            return new Constant.Int(tryCalculateValue());
+        }
+
         Value operand1 = mulExpNode == null ? null : mulExpNode.buildIR();
         Value operand2 = unaryExpNode.buildIR();
 

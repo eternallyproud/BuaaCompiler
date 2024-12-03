@@ -17,6 +17,13 @@ public class GlobalVariable extends GlobalValue {
         this.initializer = initializer;
     }
 
+    public int getInitialValue(int index) {
+        if (index > initializer.getValues().size() - 1) {
+            return 0;
+        }
+        return initializer.getValues().get(index);
+    }
+
     @Override
     public String toString() {
         return name + " = dso_local global " + initializer;

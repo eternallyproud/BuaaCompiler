@@ -55,24 +55,32 @@ public class UnaryExpNode extends Node {
         }
     }
 
-    public int calculateValue() {
+    public Integer tryCalculateValue() {
         //<PrimaryExp>
         if (primaryExpNode != null) {
-            return primaryExpNode.calculateValue();
+            return primaryExpNode.tryCalculateValue();
+        }
+        //<Ident> '(' [ <FuncRParams> ] ')'
+        else if (identToken != null) {
+            return null;
         }
         //<UnaryOp> <UnaryExp>
         else {
+            Integer operand = unaryExpNode.tryCalculateValue();
+            if (operand == null) {
+                return null;
+            }
             //'+'
             if (unaryOpNode.getOpTokenType() == TokenType.PLUS) {
-                return unaryExpNode.calculateValue();
+                return operand;
             }
             //'-'
             else if (unaryOpNode.getOpTokenType() == TokenType.MINU) {
-                return -unaryExpNode.calculateValue();
+                return -operand;
             }
             //'!'
             else {
-                return unaryExpNode.calculateValue() == 1 ? 0 : 1;
+                return operand == 0 ? 1 : 0;
             }
         }
     }
@@ -103,6 +111,10 @@ public class UnaryExpNode extends Node {
 
     @Override
     public Value buildIR() {
+        if (tryCalculateValue() != null) {
+            return new Constant.Int(tryCalculateValue());
+        }
+
         //<PrimaryExp>
         if (primaryExpNode != null) {
             return primaryExpNode.buildIR();

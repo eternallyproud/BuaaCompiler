@@ -4,6 +4,7 @@ import frontend.ir.IRBuilder;
 import frontend.ir.llvm.ValueTable;
 import frontend.ir.llvm.value.Constant;
 import frontend.ir.llvm.value.Value;
+import frontend.ir.llvm.value.global.GlobalVariable;
 import frontend.ir.llvm.value.instruction.memory.GetElementPtr;
 import frontend.ir.llvm.value.instruction.memory.Load;
 import frontend.ir.llvm.value.type.ScalarValueType;
@@ -37,8 +38,39 @@ public class LValNode extends Node {
         SymbolTable.SYMBOL_TABLE.tackle(identToken, lbrackToken != null);
     }
 
-    public int calculateValue() {
-        return Integer.parseInt(ValueTable.VALUE_TABLE.get(identToken.getContent()).getName());
+    public Integer tryCalculateValue() {
+        Value identValue = ValueTable.VALUE_TABLE.get(identToken.getContent());
+
+        //non-array
+        if (!dataType.isArray()) {
+            //const
+            if (dataType.isConst()) {
+                return Integer.parseInt(identValue.getName());
+            }
+            //non-const
+            else {
+                return null;
+            }
+        }
+        //array
+        else {
+            //return array pointer
+            if (expNode == null) {
+                return null;
+            }
+            //return array element
+            else {
+                if (dataType.isConst() && identValue instanceof GlobalVariable globalVariable) {
+                    Integer exp = expNode.tryCalculateValue();
+                    if(exp == null){
+                        return null;
+                    }
+                    return globalVariable.getInitialValue(exp);
+                } else {
+                    return null;
+                }
+            }
+        }
     }
 
     @Override

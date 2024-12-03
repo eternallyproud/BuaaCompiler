@@ -1,6 +1,7 @@
 package frontend.parser.node;
 
 import frontend.ir.IRBuilder;
+import frontend.ir.llvm.value.Constant;
 import frontend.ir.llvm.value.Value;
 import frontend.ir.llvm.value.instruction.BinaryOperation;
 import frontend.ir.llvm.value.instruction.Instruction;
@@ -27,20 +28,25 @@ public class AddExpNode extends Node {
         return mulExpNode.getDataType();
     }
 
-    public int calculateValue() {
+    public Integer tryCalculateValue() {
         //<MulExp>
         if (addExpNode == null) {
-            return mulExpNode.calculateValue();
+            return mulExpNode.tryCalculateValue();
         }
         //<AddExp> ('+' | '−') <MulExp>
         else {
+            Integer operand1 = addExpNode.tryCalculateValue();
+            Integer operand2 = mulExpNode.tryCalculateValue();
+            if (operand1 == null || operand2 == null) {
+                return null;
+            }
             //'+'
             if (addToken.getType() == TokenType.PLUS) {
-                return addExpNode.calculateValue() + mulExpNode.calculateValue();
+                return operand1 + operand2;
             }
             //'-'
             else {
-                return addExpNode.calculateValue() - mulExpNode.calculateValue();
+                return operand1 - operand2;
             }
         }
     }
@@ -60,6 +66,10 @@ public class AddExpNode extends Node {
 
     @Override
     public Value buildIR() {
+        if (tryCalculateValue() != null) {
+            return new Constant.Int(tryCalculateValue());
+        }
+
         Value operand1 = addExpNode == null ? null : addExpNode.buildIR();
         Value operand2 = mulExpNode.buildIR();
 

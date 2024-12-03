@@ -34,11 +34,11 @@ public class InitValNode extends Node {
         ArrayList<Integer> values;
         //<Exp>
         if (expNode != null) {
-            values = new ArrayList<>(Collections.singletonList(expNode.calculateValue()));
+            values = new ArrayList<>(Collections.singletonList(expNode.tryCalculateValue()));
         }
         //'{' [ <Exp> { ',' <Exp> } ] '}'
         else if (lbraceToken != null) {
-            values = expNodes.stream().map(ExpNode::calculateValue).collect(Collectors.toCollection(ArrayList::new));
+            values = expNodes.stream().map(ExpNode::tryCalculateValue).collect(Collectors.toCollection(ArrayList::new));
         }
         //<StringConst>
         else {

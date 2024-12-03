@@ -7,8 +7,9 @@ import optimize.assembly.RemovePhi;
 import optimize.ir.ControlFlowGraph;
 import optimize.ir.DeleteDeadCode;
 import optimize.ir.Dominance;
-import optimize.ir.LiveVariableAnalysis;
+import optimize.assembly.LiveVariableAnalysis;
 import optimize.ir.Mem2Reg;
+import optimize.ir.RemoveRedundantInstruction;
 import optimize.ir.RemoveUnreachableBasicBlock;
 import optimize.ir.RemoveUnreachableInstruction;
 import utils.InOut;
@@ -45,6 +46,9 @@ public class OptimizeManager {
 
             DeleteDeadCode.DELETE_DEAD_CODE.init(module);
             DeleteDeadCode.DELETE_DEAD_CODE.optimize();
+
+            RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.init(module);
+            RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize();
 
             Tools.printEndMessage("中间代码优化");
         }

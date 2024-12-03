@@ -16,8 +16,8 @@ public class ExpNode extends Node {
         return addExpNode.getDataType();
     }
 
-    public int calculateValue() {
-        return addExpNode.calculateValue();
+    public Integer tryCalculateValue() {
+        return addExpNode.tryCalculateValue();
     }
 
     @Override

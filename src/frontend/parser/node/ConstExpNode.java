@@ -10,7 +10,7 @@ public class ConstExpNode extends Node {
     }
 
     public int calculateValue(){
-        return addExpNode.calculateValue();
+        return addExpNode.tryCalculateValue();
     }
 
     @Override

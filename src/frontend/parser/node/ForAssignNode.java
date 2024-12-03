@@ -41,7 +41,7 @@ public class ForAssignNode extends Node {
         Store store = new Store(IRBuilder.IR_BUILDER.getLocalVarName(), assignValue, lValValue);
         IRBuilder.IR_BUILDER.addInstruction(store);
 
-        return store;
+        return null;
     }
 
     @Override

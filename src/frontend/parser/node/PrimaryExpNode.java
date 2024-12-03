@@ -1,5 +1,6 @@
 package frontend.parser.node;
 
+import frontend.ir.llvm.value.Constant;
 import frontend.ir.llvm.value.Value;
 import frontend.semantic.symbol.DataType;
 import frontend.lexer.token.Token;
@@ -44,6 +45,25 @@ public class PrimaryExpNode extends Node {
         }
     }
 
+    public Integer tryCalculateValue() {
+        //'(' <Exp> ')'
+        if (lparenToken != null) {
+            return expNode.tryCalculateValue();
+        }
+        //<LVal>
+        else if (lvalNode != null) {
+            return lvalNode.tryCalculateValue();
+        }
+        //<Number>
+        else if (numberNode != null) {
+            return numberNode.tryCalculateValue();
+        }
+        //<Character>
+        else {
+            return characterNode.tryCalculateValue();
+        }
+    }
+
     @Override
     public void checkSemantic() {
         //'(' <Exp> ')'
@@ -64,27 +84,12 @@ public class PrimaryExpNode extends Node {
         }
     }
 
-    public int calculateValue() {
-        //'(' <Exp> ')'
-        if (lparenToken != null) {
-            return expNode.calculateValue();
-        }
-        //<LVal>
-        else if (lvalNode != null) {
-            return lvalNode.calculateValue();
-        }
-        //<Number>
-        else if (numberNode != null) {
-            return numberNode.calculateValue();
-        }
-        //<Character>
-        else {
-            return characterNode.calculateValue();
-        }
-    }
-
     @Override
     public Value buildIR() {
+        if(tryCalculateValue()!=null){
+            return new Constant.Int(tryCalculateValue());
+        }
+
         //'(' <Exp> ')'
         if (lparenToken != null) {
             return expNode.buildIR();

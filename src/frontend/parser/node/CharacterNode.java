@@ -19,7 +19,7 @@ public class CharacterNode extends Node {
         return DataType.CHAR.getCharToInt();
     }
 
-    public int calculateValue() {
+    public Integer tryCalculateValue() {
         String charConst = charConstToken.getContent();
         return Tools.characterToAscii(charConst.substring(1, charConst.length() - 1));
     }

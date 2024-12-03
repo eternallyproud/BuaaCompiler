@@ -18,7 +18,7 @@ public class NumberNode extends Node {
         return DataType.INT;
     }
 
-    public int calculateValue() {
+    public Integer tryCalculateValue() {
         return Integer.parseInt(intConstToken.getContent());
     }
 
