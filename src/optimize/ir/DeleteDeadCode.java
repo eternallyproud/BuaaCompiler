@@ -20,16 +20,10 @@ public class DeleteDeadCode {
 
     public void optimize(Module module) {
         this.module = module;
-        printInfo();
-        optimize();
-    }
 
-    private void printInfo() {
-        if (Configuration.DELETE_DEAD_CODE_OPTIMIZATION) {
-            Tools.printOpenInfo("死代码删除优化");
-        } else {
-            Tools.printCloseInfo("死代码删除优化");
-        }
+        Tools.printOptimizeInfo("死代码删除优化", Configuration.DELETE_DEAD_CODE_OPTIMIZATION);
+
+        optimize();
     }
 
     public boolean optimize() {

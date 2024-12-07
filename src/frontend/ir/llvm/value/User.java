@@ -55,6 +55,15 @@ public class User extends Value {
         return usedList.size() > index ? usedList.get(index).getUsed() : null;
     }
 
+    public int getIndexOfUsedValue(Value usedValue) {
+        for (int i = 0; i < usedList.size(); i++) {
+            if (usedList.get(i).getUsed().equals(usedValue)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public ArrayList<Value> getUsedValueList() {
         return usedList.stream().map(Use::getUsed).collect(Collectors.toCollection(ArrayList::new));
     }

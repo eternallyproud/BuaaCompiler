@@ -24,6 +24,10 @@ public class Br extends TerminatorInstruction {
             addUsed(elseBasicBlock);
         }
 
+        public Value getCondValue() {
+            return getUsedValue(0);
+        }
+
         public void setIfBasicBlock(BasicBlock ifBasicBlock) {
             setUsed(1, ifBasicBlock);
         }

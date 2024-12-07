@@ -25,29 +25,26 @@ public class Mem2Reg {
     private ArrayList<Instruction> defInstructions;
     private ArrayList<Instruction> useInstructions;
 
-    public void init(Module module) {
+    public void optimize(Module module) {
         this.module = module;
+
+        Tools.printOptimizeInfo("Mem2Reg优化", Configuration.MEM2REG_OPTIMIZATION);
+
+        optimize();
     }
 
     public void optimize() {
-        if (Configuration.MEM2REG_OPTIMIZATION) {
-            Tools.printOpenInfo("Mem2Reg优化");
-
-            for (Function function : module.getFunctions()) {
-                for (BasicBlock basicBlock : function.getBasicBlocks()) {
-                    //if not newed, there might be ConcurrentModificationException exceptions
-                    for (Instruction instruction : new ArrayList<>(basicBlock.getInstructions())) {
-                        if (instruction instanceof Alloca alloca && instruction.getValueType().getPointerReferenceValueType() instanceof ScalarValueType) {
-                            init(alloca);
-                            insertPhi(alloca);
-                            rename(new ArrayList<>(), function.getBasicBlocks().get(0), alloca);
-                        }
+        for (Function function : module.getFunctions()) {
+            for (BasicBlock basicBlock : function.getBasicBlocks()) {
+                //if not newed, there might be ConcurrentModificationException exceptions
+                for (Instruction instruction : new ArrayList<>(basicBlock.getInstructions())) {
+                    if (instruction instanceof Alloca alloca && instruction.getValueType().getPointerReferenceValueType() instanceof ScalarValueType) {
+                        init(alloca);
+                        insertPhi(alloca);
+                        rename(new ArrayList<>(), function.getBasicBlocks().get(0), alloca);
                     }
                 }
             }
-
-        } else {
-            Tools.printCloseInfo("Mem2Reg优化");
         }
     }
 

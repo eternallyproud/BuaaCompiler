@@ -47,6 +47,15 @@ public class BasicBlock extends Value {
         instructions.add(0, phi);
     }
 
+    public boolean isUsedByPhi() {
+        for (Use use : userList) {
+            if (use.getUser() instanceof Phi) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addBeforeLast(Instruction instruction) {
         instructions.add(instructions.size() - 1, instruction);
     }
@@ -80,7 +89,24 @@ public class BasicBlock extends Value {
     }
 
     public void updatePredecessors(BasicBlock oldPredecessor, BasicBlock newPredecessor) {
+        if( predecessors.contains(newPredecessor)) {
+            predecessors.remove(oldPredecessor);
+            return;
+        }
         predecessors.set(predecessors.indexOf(oldPredecessor), newPredecessor);
+    }
+
+    public void removeFromPredecessors(BasicBlock basicBlock) {
+        predecessors.remove(basicBlock);
+    }
+
+    public void updatePredecessors(BasicBlock oldPredecessor, ArrayList<BasicBlock> newPredecessors) {
+        predecessors.remove(oldPredecessor);
+        for(BasicBlock basicBlock : newPredecessors) {
+            if (!predecessors.contains(basicBlock)) {
+                predecessors.add(basicBlock);
+            }
+        }
     }
 
     public ArrayList<BasicBlock> getPredecessors() {
@@ -91,7 +117,15 @@ public class BasicBlock extends Value {
         this.successors = successors;
     }
 
+    public void removeFromSuccessors(BasicBlock basicBlock) {
+        successors.remove(basicBlock);
+    }
+
     public void updateSuccessors(BasicBlock oldSuccessor, BasicBlock newSuccessor) {
+        if( successors.contains(newSuccessor)) {
+            successors.remove(oldSuccessor);
+            return;
+        }
         successors.set(successors.indexOf(oldSuccessor), newSuccessor);
     }
 
@@ -139,6 +173,10 @@ public class BasicBlock extends Value {
         this.son = son;
     }
 
+    public void removeSon(BasicBlock basicBlock) {
+        son.remove(basicBlock);
+    }
+
     public ArrayList<BasicBlock> getSon() {
         return son;
     }
@@ -151,17 +189,17 @@ public class BasicBlock extends Value {
         return dominanceFrontier;
     }
 
-    public void analyzeDefUse(){
+    public void analyzeDefUse() {
         def = new ArrayList<>();
         use = new ArrayList<>();
 
         for (Instruction instruction : instructions) {
-            for(Value usedValue : instruction.getUsedValueList()){
-                if(!def.contains(usedValue) && !(usedValue instanceof Constant)){
+            for (Value usedValue : instruction.getUsedValueList()) {
+                if (!def.contains(usedValue) && !(usedValue instanceof Constant)) {
                     use.add(usedValue);
                 }
             }
-            if(!use.contains(instruction)&&instruction.usable()){
+            if (!use.contains(instruction) && instruction.usable()) {
                 def.add(instruction);
             }
         }

@@ -17,20 +17,19 @@ public class RemoveUnreachableInstruction {
     private RemoveUnreachableInstruction() {
     }
 
-    public void init(Module module) {
+    public void optimize(Module module) {
         this.module = module;
+
+        Tools.printOptimizeInfo("不可达指令移除优化", Configuration.REMOVE_UNREACHABLE_INSTRUCTION_OPTIMIZATION);
+
+        optimize();
     }
 
     public void optimize() {
-        if (Configuration.REMOVE_UNREACHABLE_INSTRUCTION_OPTIMIZATION) {
-            Tools.printOpenInfo("不可达指令移除优化");
-            for (Function function : module.getFunctions()) {
-                for (BasicBlock basicBlock : function.getBasicBlocks()) {
-                    optimize(basicBlock);
-                }
+        for (Function function : module.getFunctions()) {
+            for (BasicBlock basicBlock : function.getBasicBlocks()) {
+                optimize(basicBlock);
             }
-        } else {
-            Tools.printCloseInfo("不可达指令移除优化");
         }
     }
 

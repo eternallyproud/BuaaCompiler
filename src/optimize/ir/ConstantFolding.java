@@ -24,16 +24,10 @@ public class ConstantFolding {
 
     public void optimize(Module module) {
         this.module = module;
-        printInfo();
-        optimize();
-    }
 
-    private void printInfo() {
-        if (Configuration.CONSTANT_FOLDING_OPTIMIZATION) {
-            Tools.printOpenInfo("常量折叠优化");
-        } else {
-            Tools.printCloseInfo("常量折叠优化");
-        }
+        Tools.printOptimizeInfo("常量折叠优化", Configuration.CONSTANT_FOLDING_OPTIMIZATION);
+
+        optimize();
     }
 
     public boolean optimize() {

@@ -16,19 +16,17 @@ public class RemoveUnreachableBasicBlock {
     public RemoveUnreachableBasicBlock() {
     }
 
-    public void init(Module module) {
+    public void optimize(Module module) {
         this.module = module;
+
+        Tools.printOptimizeInfo("不可达基本块移除优化", Configuration.REMOVE_UNREACHABLE_BASIC_BLOCK_OPTIMIZATION);
+
+        optimize();
     }
 
     public void optimize() {
-        if (Configuration.REMOVE_UNREACHABLE_BASIC_BLOCK_OPTIMIZATION) {
-            Tools.printOpenInfo("不可达基本块移除优化");
-
-            for (Function function : module.getFunctions()) {
-                optimize(function);
-            }
-        } else {
-            Tools.printCloseInfo("不可达基本块移除优化");
+        for (Function function : module.getFunctions()) {
+            optimize(function);
         }
     }
 
@@ -48,7 +46,7 @@ public class RemoveUnreachableBasicBlock {
                 }
 
                 //remove user-used relation
-                for(Instruction instruction : basicBlock.getInstructions()){
+                for (Instruction instruction : basicBlock.getInstructions()) {
                     instruction.removeAllUse();
                 }
 

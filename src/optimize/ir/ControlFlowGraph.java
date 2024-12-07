@@ -17,18 +17,19 @@ public class ControlFlowGraph {
     private ControlFlowGraph() {
     }
 
-    public void init(Module module) {
-        this.module = module;
-    }
-
-    public void build() {
+    public void build(Module module) {
         Tools.printStartMessage("建立控制流图");
 
+        this.module = module;
+        build();
+
+        Tools.printEndMessage("建立控制流图");
+    }
+
+    public void build(){
         for (Function function : module.getFunctions()) {
             build(function);
         }
-
-        Tools.printEndMessage("建立控制流图");
     }
 
     private void build(Function function) {

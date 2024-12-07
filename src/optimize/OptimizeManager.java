@@ -22,60 +22,40 @@ public class OptimizeManager {
     public final static OptimizeManager OPTIMIZE_MANAGER = new OptimizeManager();
     private Module module;
 
-    public void init(Module module){
+    public void init(Module module) {
         this.module = module;
     }
 
-    public void optimizeIR(){
-        if(!ErrorHandler.ERROR_HANDLER.isEmpty()){
+    public void optimizeIR() {
+        if (!ErrorHandler.ERROR_HANDLER.isEmpty()) {
             Tools.printFailMessage("中间代码优化");
-        }else{
+        } else {
             Tools.printStartMessage("中间代码优化");
 
-            RemoveUnreachableInstruction.REMOVE_UNREACHABLE_INSTRUCTION.init(module);
-            RemoveUnreachableInstruction.REMOVE_UNREACHABLE_INSTRUCTION.optimize();
-
-            ControlFlowGraph.CONTROL_FLOW_GRAPH.init(module);
-            ControlFlowGraph.CONTROL_FLOW_GRAPH.build();
-
-            RemoveUnreachableBasicBlock.REMOVE_UNREACHABLE_BASIC_BLOCK.init(module);
-            RemoveUnreachableBasicBlock.REMOVE_UNREACHABLE_BASIC_BLOCK.optimize();
-
-            Dominance.DOMINANCE.init(module);
-            Dominance.DOMINANCE.build();
-
-            Mem2Reg.MEM2REG.init(module);
-            Mem2Reg.MEM2REG.optimize();
-
+            RemoveUnreachableInstruction.REMOVE_UNREACHABLE_INSTRUCTION.optimize(module);
+            ControlFlowGraph.CONTROL_FLOW_GRAPH.build(module);
+            RemoveUnreachableBasicBlock.REMOVE_UNREACHABLE_BASIC_BLOCK.optimize(module);
+            Dominance.DOMINANCE.build(module);
+            Mem2Reg.MEM2REG.optimize(module);
             DeleteDeadCode.DELETE_DEAD_CODE.optimize(module);
-
+            GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize(module);
+            ConstantFolding.CONSTANT_FOLDING.optimize(module);
             RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize(module);
 
-            GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize(module);
-
-            ConstantFolding.CONSTANT_FOLDING.optimize(module);
-
             boolean hasChanged = true;
-            while(hasChanged && Configuration.MULTI_ROUND_OPTIMIZATION) {
+            while (hasChanged && Configuration.MULTI_ROUND_OPTIMIZATION) {
                 hasChanged = false;
                 module.clear();
 
-                if(DeleteDeadCode.DELETE_DEAD_CODE.optimize()){
-                    hasChanged = true;
-                }
-
-                if(RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize()){
-                    hasChanged = true;
-                }
-
-                if(GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize()){
-                    hasChanged = true;
-                }
-
-                if(ConstantFolding.CONSTANT_FOLDING.optimize()){
-                    hasChanged = true;
-                }
+                if (DeleteDeadCode.DELETE_DEAD_CODE.optimize()) hasChanged = true;
+                if (GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize()) hasChanged = true;
+                if (ConstantFolding.CONSTANT_FOLDING.optimize()) hasChanged = true;
+                if (RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize()) hasChanged = true;
             }
+
+            ControlFlowGraph.CONTROL_FLOW_GRAPH.build();
+            RemoveUnreachableBasicBlock.REMOVE_UNREACHABLE_BASIC_BLOCK.optimize();
+            Dominance.DOMINANCE.build();
 
             Tools.printEndMessage("中间代码优化");
         }
@@ -85,10 +65,10 @@ public class OptimizeManager {
         InOut.writeIROptimizationResult(module.toString());
     }
 
-    public void optimizeAssembly(){
-        if(!ErrorHandler.ERROR_HANDLER.isEmpty()){
+    public void optimizeAssembly() {
+        if (!ErrorHandler.ERROR_HANDLER.isEmpty()) {
             Tools.printFailMessage("汇编代码优化");
-        }else{
+        } else {
             Tools.printStartMessage("汇编代码优化");
 
             LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.init(module);

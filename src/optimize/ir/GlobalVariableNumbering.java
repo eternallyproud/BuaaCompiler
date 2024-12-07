@@ -14,7 +14,6 @@ import utils.Tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class GlobalVariableNumbering {
     public final static GlobalVariableNumbering GLOBAL_VARIABLE_NUMBERING = new GlobalVariableNumbering();
@@ -27,16 +26,10 @@ public class GlobalVariableNumbering {
 
     public void optimize(Module module) {
         this.module = module;
-        printInfo();
-        optimize();
-    }
 
-    public void printInfo() {
-        if (Configuration.GLOBAL_VARIABLE_NUMBERING_OPTIMIZATION) {
-            Tools.printOpenInfo("全局变量编号优化");
-        } else {
-            Tools.printCloseInfo("全局变量编号优化");
-        }
+        Tools.printOptimizeInfo("全局变量编号优化", Configuration.GLOBAL_VARIABLE_NUMBERING_OPTIMIZATION);
+
+        optimize();
     }
 
     public boolean optimize() {
@@ -58,10 +51,8 @@ public class GlobalVariableNumbering {
     private void doNumbering(HashMap<String, Instruction> hashMap, BasicBlock root) {
         ArrayList<Instruction> temp = new ArrayList<>();
 
-        Iterator<Instruction> iterator = root.getInstructions().iterator();
-        while (iterator.hasNext()) {
-            Instruction instruction = iterator.next();
-
+        ArrayList<Instruction> instructions = new ArrayList<>(root.getInstructions());
+        for (Instruction instruction : instructions) {
             if (instruction instanceof BinaryOperation || instruction instanceof GetElementPtr ||
                     instruction instanceof ICmp || instruction instanceof ConversionOperation ||
                     instruction instanceof Call call && call.getFunction().canBeNumbered()) {
@@ -69,7 +60,7 @@ public class GlobalVariableNumbering {
                 if (hashMap.containsKey(hash)) {
                     instruction.updateAllUsers(hashMap.get(hash));
                     instruction.removeAllUse();
-                    iterator.remove();
+                    root.removeInstruction(instruction);
                     hasChanged = true;
                 } else {
                     hashMap.put(hash, instruction);

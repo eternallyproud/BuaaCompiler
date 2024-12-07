@@ -15,13 +15,17 @@ public class Dominance {
     private Dominance() {
     }
 
-    public void init(Module module) {
+    public void build(Module module) {
+        Tools.printStartMessage("建立支配关系");
+
         this.module = module;
+        build();
+
+
+        Tools.printEndMessage("建立支配关系");
     }
 
     public void build() {
-        Tools.printStartMessage("建立支配关系");
-
         for (Function function : module.getFunctions()) {
             buildDominance(function);
 
@@ -29,8 +33,6 @@ public class Dominance {
 
             buildDominanceFrontier(function);
         }
-
-        Tools.printEndMessage("建立支配关系");
     }
 
     private void buildDominance(Function function) {
@@ -76,7 +78,7 @@ public class Dominance {
             }
         }
 
-        for(BasicBlock basicBlock : function.getBasicBlocks()){
+        for (BasicBlock basicBlock : function.getBasicBlocks()) {
             basicBlock.setFather(father.get(basicBlock));
             basicBlock.setSon(son.get(basicBlock));
         }
@@ -85,19 +87,19 @@ public class Dominance {
     private void buildDominanceFrontier(Function function) {
         HashMap<BasicBlock, ArrayList<BasicBlock>> dominanceFrontier = function.getMap(ArrayList::new);
 
-        for(BasicBlock basicBlock : function.getBasicBlocks()){
-            for(BasicBlock successorBasicBlock : basicBlock.getSuccessors()){
+        for (BasicBlock basicBlock : function.getBasicBlocks()) {
+            for (BasicBlock successorBasicBlock : basicBlock.getSuccessors()) {
                 BasicBlock predecessorBasicBlock = basicBlock;
 
                 //predecessorBasicBlock dominates the predecessor of successorBasicBlock and does not strictly dominate successorBasicBlock
-                while(!predecessorBasicBlock.dominates(successorBasicBlock) || predecessorBasicBlock.equals(successorBasicBlock)){
+                while (!predecessorBasicBlock.dominates(successorBasicBlock) || predecessorBasicBlock.equals(successorBasicBlock)) {
                     dominanceFrontier.get(predecessorBasicBlock).add(successorBasicBlock);
                     predecessorBasicBlock = predecessorBasicBlock.getFather();
                 }
             }
         }
 
-        for (BasicBlock basicBlock: function.getBasicBlocks()){
+        for (BasicBlock basicBlock : function.getBasicBlocks()) {
             basicBlock.setDominanceFrontier(dominanceFrontier.get(basicBlock));
         }
     }

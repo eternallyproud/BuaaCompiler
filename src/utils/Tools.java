@@ -31,6 +31,14 @@ public class Tools {
         System.out.println("\n>>> " + info);
     }
 
+    public static void printOptimizeInfo(String info, boolean open){
+        if(open){
+            printOpenInfo(info);
+        }else{
+            printCloseInfo(info);
+        }
+    }
+
     public static String arrayListToString(ArrayList<?> list, String delimiter) {
         // 如果列表为空，返回空字符串
         if (list == null || list.isEmpty()) {
