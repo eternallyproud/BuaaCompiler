@@ -25,12 +25,10 @@ public class GraphColoringRegisterAllocation {
     private GraphColoringRegisterAllocation() {
         registerPool = new ArrayList<>();
         for (Register register : Register.values()) {
-            if (register.ordinal() >= Register.T0.ordinal() && register.ordinal() <= Register.T9.ordinal()) {
+            if (register.ordinal() >= Register.T0.ordinal() && register.ordinal() <= Register.T7.ordinal()) {
                 registerPool.add(register);
             }
         }
-        registerPool.add(Register.GP);
-        registerPool.add(Register.FP);
     }
 
     public void init(Module module) {
@@ -63,7 +61,7 @@ public class GraphColoringRegisterAllocation {
 
         //find out the last instruction that uses each value
         for (Instruction instruction : basicBlock.getInstructions()) {
-            if(instruction instanceof Phi){
+            if (instruction instanceof Phi) {
                 continue;
             }
             for (Value usedValue : instruction.getUsedValueList()) {
@@ -95,36 +93,36 @@ public class GraphColoringRegisterAllocation {
             }
         }
 
-        for(BasicBlock sonBasicBlock:basicBlock.getSon()){
+        for (BasicBlock sonBasicBlock : basicBlock.getSon()) {
             HashMap<Register, Value> temp = new HashMap<>();
 
-            for(Register register : registerToValue.keySet()){
-                if(!sonBasicBlock.getIn().contains(registerToValue.get(register))){
+            for (Register register : registerToValue.keySet()) {
+                if (!sonBasicBlock.getIn().contains(registerToValue.get(register))) {
                     temp.put(register, registerToValue.get(register));
                 }
             }
 
-            for(Register register : temp.keySet()){
+            for (Register register : temp.keySet()) {
                 registerToValue.remove(register);
             }
 
             allocRegister(sonBasicBlock);
 
-            for(Register register : temp.keySet()){
+            for (Register register : temp.keySet()) {
                 registerToValue.put(register, temp.get(register));
             }
         }
 
 
         //free the registers which are allocated in the current basic block
-        for(Value value : allocated){
+        for (Value value : allocated) {
             if (valueToRegister.containsKey(value)) {
                 registerToValue.remove(valueToRegister.get(value));
             }
         }
 
         //recover the registers in never used after
-        for(Value value :neverUsedAfter){
+        for (Value value : neverUsedAfter) {
             if (valueToRegister.containsKey(value) && !allocated.contains(value)) {
                 registerToValue.put(valueToRegister.get(value), value);
             }
