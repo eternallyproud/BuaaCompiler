@@ -1,6 +1,7 @@
 package backend;
 
 import backend.assembly.Assembly;
+import backend.assembly.Comment;
 import backend.assembly.directive.SegmentDeclaration;
 
 import java.util.ArrayList;
@@ -23,6 +24,21 @@ public class AssemblyRecord {
 
     public void addToText(Assembly assembly) {
         textSegment.add(assembly);
+    }
+
+    public void removeFromText(Assembly assembly) {
+        textSegment.remove(assembly);
+    }
+
+    public void replaceInText(Assembly oldAssembly, Assembly newAssembly) {
+        int index = textSegment.indexOf(oldAssembly);
+        textSegment.set(index, newAssembly);
+    }
+
+    public ArrayList<Assembly> getTextSegment() {
+        return textSegment.stream()
+                .filter(assembly -> !(assembly instanceof Comment))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

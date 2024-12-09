@@ -4,6 +4,7 @@ import backend.assembly.Assembly;
 import error.ErrorHandler;
 import frontend.ir.llvm.value.Module;
 import frontend.ir.llvm.value.Value;
+import optimize.OptimizeManager;
 import utils.InOut;
 import utils.Tools;
 
@@ -121,5 +122,9 @@ public class AssemblyBuilder {
 
     public void writeAssembly() {
         InOut.writeAssemblyResult(assemblyRecord.toString());
+    }
+
+    public void optimize(){
+        OptimizeManager.OPTIMIZE_MANAGER.optimizeAssembly(assemblyRecord);
     }
 }

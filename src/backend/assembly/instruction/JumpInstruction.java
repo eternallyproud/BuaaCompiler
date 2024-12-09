@@ -30,6 +30,14 @@ public class JumpInstruction extends Instruction {
         this.rs = rs;
     }
 
+    public String getOperator(){
+        return jumpOperator.toString();
+    }
+
+    public String getTarget(){
+        return target;
+    }
+
     @Override
     public String toString() {
         if (target != null) {

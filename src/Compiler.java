@@ -41,6 +41,7 @@ public class Compiler {
         // assembly
         AssemblyBuilder.ASSEMBLY_BUILDER.init(IRBuilder.IR_BUILDER.getModule());
         AssemblyBuilder.ASSEMBLY_BUILDER.buildAssembly();
+        AssemblyBuilder.ASSEMBLY_BUILDER.optimize();
         AssemblyBuilder.ASSEMBLY_BUILDER.writeAssembly();
 
         // checker

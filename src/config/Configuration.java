@@ -54,4 +54,6 @@ public class Configuration {
     public static boolean REMOVE_REDUNDANT_INSTRUCTION_OPTIMIZATION = true;
     // 图着色寄存器分配优化
     public static boolean GRAPH_COLORING_REGISTER_ALLOCATION_OPTIMIZATION = true;
+    // 窥孔优化
+    public static boolean PEEP_HOLE_OPTIMIZATION = true;
 }

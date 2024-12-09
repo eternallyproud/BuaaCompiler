@@ -34,6 +34,18 @@ public class MemoryInstruction extends Instruction {
         this.offset = offset;
     }
 
+    public String getOperator() {
+        return memoryOperator.toString();
+    }
+
+    public Register getBase() {
+        return base;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
     @Override
     public String toString() {
         if (label != null) {

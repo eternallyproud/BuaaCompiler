@@ -1,9 +1,11 @@
 package optimize;
 
+import backend.AssemblyRecord;
 import config.Configuration;
 import error.ErrorHandler;
 import frontend.ir.llvm.value.Module;
 import optimize.assembly.GraphColoringRegisterAllocation;
+import optimize.assembly.PeepHole;
 import optimize.assembly.RemovePhi;
 import optimize.ir.ConstantFolding;
 import optimize.ir.ControlFlowGraph;
@@ -67,9 +69,9 @@ public class OptimizeManager {
 
     public void optimizeAssembly() {
         if (!ErrorHandler.ERROR_HANDLER.isEmpty()) {
-            Tools.printFailMessage("汇编代码优化");
+            Tools.printFailMessage("汇编前优化");
         } else {
-            Tools.printStartMessage("汇编代码优化");
+            Tools.printStartMessage("汇编前优化");
 
             LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.init(module);
             LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.analyze();
@@ -79,6 +81,20 @@ public class OptimizeManager {
 
             RemovePhi.REMOVE_PHI.init(module);
             RemovePhi.REMOVE_PHI.build();
+
+            Tools.printEndMessage("汇编前优化");
+        }
+    }
+
+    public void optimizeAssembly(AssemblyRecord record){
+        if (!ErrorHandler.ERROR_HANDLER.isEmpty()) {
+            Tools.printFailMessage("汇编代码优化");
+        } else {
+            Tools.printStartMessage("汇编代码优化");
+
+            System.out.print(record);
+
+            PeepHole.PEEP_HOLE.optimize(record);
 
             Tools.printEndMessage("汇编代码优化");
         }
