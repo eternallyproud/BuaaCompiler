@@ -55,6 +55,8 @@ public class ForStmtNode extends StmtNode {
         SymbolTable.SYMBOL_TABLE.addLoopDepth();
         stmtNode.checkSemantic();
         SymbolTable.SYMBOL_TABLE.reduceLoopDepth();
+
+        loopDepth = SymbolTable.SYMBOL_TABLE.getLoopDepth();
     }
 
     @Override
@@ -62,22 +64,22 @@ public class ForStmtNode extends StmtNode {
         //cond basic block
         BasicBlock condBasicBlock = null;
         if (condNode != null) {
-            condBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+            condBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), loopDepth + 1);
             IRBuilder.IR_BUILDER.addBasicBlock(condBasicBlock);
         }
 
         //loop body basic block
-        BasicBlock loopBodyBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+        BasicBlock loopBodyBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), loopDepth + 1);
         IRBuilder.IR_BUILDER.addBasicBlock(loopBodyBasicBlock);
 
         //finish basic block
-        BasicBlock finishBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+        BasicBlock finishBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), loopDepth);
         IRBuilder.IR_BUILDER.addBasicBlock(finishBasicBlock);
 
         //update basic block
         BasicBlock updateBasicBlock = null;
         if (forAssignNode2 != null) {
-            updateBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+            updateBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), loopDepth + 1);
             IRBuilder.IR_BUILDER.addBasicBlock(updateBasicBlock);
         }
 

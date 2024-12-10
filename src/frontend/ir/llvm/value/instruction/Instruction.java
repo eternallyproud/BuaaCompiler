@@ -12,6 +12,7 @@ import frontend.ir.llvm.value.type.ValueType;
 
 public class Instruction extends User {
     private BasicBlock fatherBasicBlock;
+    private int score = 0;
 
     public Instruction(ValueType valueType, String name) {
         super(valueType, name);
@@ -23,6 +24,14 @@ public class Instruction extends User {
 
     public BasicBlock getFatherBasicBlock() {
         return fatherBasicBlock;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public void removeAllUse(){

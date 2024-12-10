@@ -9,7 +9,7 @@ public class ComputationalInstruction extends Instruction {
         //R-R mult/div
         MULT, DIV,
         //R-I
-        ADDI, ANDI,
+        ADDI, ADDIU, ANDI,
         UNDEFINED;
 
         public static ComputationalOperator getByString(String str) {

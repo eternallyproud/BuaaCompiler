@@ -4,6 +4,7 @@ import frontend.ir.llvm.value.Value;
 
 public abstract class Node {
     protected final NodeType nodeType;
+    protected int loopDepth;
 
     public Node(NodeType nodeType) {
         this.nodeType = nodeType;

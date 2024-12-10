@@ -6,6 +6,7 @@ import frontend.ir.llvm.value.Value;
 import frontend.ir.llvm.value.instruction.terminator.Br;
 import frontend.parser.node.CondNode;
 import frontend.lexer.token.Token;
+import frontend.semantic.SymbolTable;
 
 import java.util.Objects;
 
@@ -46,22 +47,24 @@ public class IfStmtNode extends StmtNode {
         if (elseStmtNode != null) {
             elseStmtNode.checkSemantic();
         }
+
+        loopDepth = SymbolTable.SYMBOL_TABLE.getLoopDepth();
     }
 
     @Override
     public Value buildIR() {
         //if basic block
-        BasicBlock ifBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+        BasicBlock ifBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), loopDepth);
         IRBuilder.IR_BUILDER.addBasicBlock(ifBasicBlock);
 
         //if-else
-        if(elseToken != null){
+        if (elseToken != null) {
             //else basic block
-            BasicBlock elseBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+            BasicBlock elseBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), loopDepth);
             IRBuilder.IR_BUILDER.addBasicBlock(elseBasicBlock);
 
             //finish basic block
-            BasicBlock finishBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+            BasicBlock finishBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), loopDepth);
             IRBuilder.IR_BUILDER.addBasicBlock(finishBasicBlock);
 
             //buildIR for cond node
@@ -87,9 +90,9 @@ public class IfStmtNode extends StmtNode {
             IRBuilder.IR_BUILDER.setCurrentBasicBlock(finishBasicBlock);
         }
         //if
-        else{
+        else {
             //finish basic block
-            BasicBlock finishBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+            BasicBlock finishBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), loopDepth);
             IRBuilder.IR_BUILDER.addBasicBlock(finishBasicBlock);
 
             //buildIR for cond node

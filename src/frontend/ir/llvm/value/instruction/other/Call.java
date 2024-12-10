@@ -15,17 +15,24 @@ import frontend.ir.llvm.value.global.Function;
 import frontend.ir.llvm.value.type.ScalarValueType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 //<result> = call <ty> <function>(<function args>)
 public class Call extends Operation {
+    private HashSet<Register> activeRegisters = null;
+
     public Call(String name, Function function, ArrayList<Value> parameters) {
         super(function.getValueType(), name);
         addUsed(function);
         for (Value parameter : parameters) {
             addUsed(parameter);
         }
+    }
+
+    public void setActiveRegisters(HashSet<Register> activeRegisters) {
+        this.activeRegisters = activeRegisters;
     }
 
     public Function getFunction() {
@@ -42,27 +49,34 @@ public class Call extends Operation {
         super.buildAssembly();
 
         MemoryInstruction sw, lw;
+        ArrayList<MemoryInstruction> swInstructions = new ArrayList<>(), lwInstructions = new ArrayList<>();
         int stackOffset = AssemblyBuilder.ASSEMBLY_BUILDER.getStackOffset();
 
         //store mapped registers
         ArrayList<Register> mappedRegisters = AssemblyBuilder.ASSEMBLY_BUILDER.getMappedRegisters();
+        if (activeRegisters != null) {
+            mappedRegisters = new ArrayList<>(activeRegisters);
+            for (Register register : AssemblyBuilder.ASSEMBLY_BUILDER.getMappedRegisters()) {
+                if (register == Register.A1 || register == Register.A2 || register == Register.A3) {
+                    mappedRegisters.add(register);
+                }
+            }
+        }
         for (int index = 0; index < mappedRegisters.size(); index++) {
             sw = new MemoryInstruction("sw", mappedRegisters.get(index), null, Register.SP, stackOffset - 4 * (index + 1));
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sw);
+            swInstructions.add(sw);
         }
-        //store sp
-        sw = new MemoryInstruction("sw", Register.SP, null, Register.SP, stackOffset - 4 * mappedRegisters.size() - 4);
-        AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sw);
 
         //store ra
-        sw = new MemoryInstruction("sw", Register.RA, null, Register.SP, stackOffset - 4 * mappedRegisters.size() - 8);
+        sw = new MemoryInstruction("sw", Register.RA, null, Register.SP, stackOffset - 4 * mappedRegisters.size() - 4);
         AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sw);
 
         //store parameters
         List<Value> parameters = getUsedValueList().subList(1, getUsedValueList().size());
         for (int index = 0; index < parameters.size(); index++) {
             //first three parameters
-            if (index < 3 && AssemblyBuilder.ASSEMBLY_BUILDER.memoryToRegister()) {
+            if (index < 3 && AssemblyBuilder.ASSEMBLY_BUILDER.valueToRegister()) {
                 //rs: register to move the parameter from
                 Register rs = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(parameters.get(index));
 
@@ -117,14 +131,14 @@ public class Call extends Operation {
                     lw = new MemoryInstruction("lw", rt, null, Register.SP, AssemblyBuilder.ASSEMBLY_BUILDER.getValueStackOffset(parameters.get(index)));
                     AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
                 }
-                sw = new MemoryInstruction("sw", rt, null, Register.SP, stackOffset - 4 * mappedRegisters.size() - 8 - 4 * index - 4);
+                sw = new MemoryInstruction("sw", rt, null, Register.SP, stackOffset - 4 * mappedRegisters.size() - 4 - 4 * index - 4);
                 AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sw);
             }
         }
 
-        //renew sp -> sp - 4 * mappedRegisters.size() - 8
-        ComputationalInstruction addi = new ComputationalInstruction("addi", Register.SP, Register.SP, stackOffset - 4 * mappedRegisters.size() - 8);
-        AssemblyBuilder.ASSEMBLY_BUILDER.addToText(addi);
+        //renew sp -> sp + stackOffset - 4 * mappedRegisters.size() - 4
+        ComputationalInstruction addiu = new ComputationalInstruction("addiu", Register.SP, Register.SP, stackOffset - 4 * mappedRegisters.size() - 4);
+        AssemblyBuilder.ASSEMBLY_BUILDER.addToText(addiu);
 
         //jal
         JumpInstruction jal = new JumpInstruction("jal", getUsedValue(0).getName().substring(1), null);
@@ -134,15 +148,20 @@ public class Call extends Operation {
         lw = new MemoryInstruction("lw", Register.RA, null, Register.SP, 0);
         AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
 
-        //restore sp
-        lw = new MemoryInstruction("lw", Register.SP, null, Register.SP, 4);
-        AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
+        //renew sp -> sp + -(stackOffset - 4 * mappedRegisters.size() - 4)
+        addiu = new ComputationalInstruction("addiu", Register.SP, Register.SP, -(stackOffset - 4 * mappedRegisters.size() - 4));
+        AssemblyBuilder.ASSEMBLY_BUILDER.addToText(addiu);
 
         //restore registers
         for (int index = 0; index < mappedRegisters.size(); ++index) {
             lw = new MemoryInstruction("lw", mappedRegisters.get(index), null, Register.SP, stackOffset - 4 * (index + 1));
             AssemblyBuilder.ASSEMBLY_BUILDER.addToText(lw);
+            lwInstructions.add(lw);
         }
+
+        //save swInstructions and lw Instructions
+        jal.setSwInstructions(swInstructions);
+        jal.setLwInstructions(lwInstructions);
 
         //store return value
         if (getUsedValue(0).getValueType() != ScalarValueType.VOID) {

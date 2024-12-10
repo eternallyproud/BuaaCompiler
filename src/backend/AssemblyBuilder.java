@@ -95,7 +95,7 @@ public class AssemblyBuilder {
         return currentValueMap.get(value);
     }
 
-    public boolean memoryToRegister() {
+    public boolean valueToRegister() {
         return valueToRegister != null;
     }
 

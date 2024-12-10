@@ -74,12 +74,12 @@ public class FuncDefNode extends Node {
         ValueTable.VALUE_TABLE.addToGlobalScope(identToken.getContent(), function);
 
         //add basic block
-        BasicBlock basicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+        BasicBlock basicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), 0);
         IRBuilder.IR_BUILDER.addBasicBlock(basicBlock);
         IRBuilder.IR_BUILDER.setCurrentBasicBlock(basicBlock);
 
         //build IR
-        if(funcFParamsNode != null){
+        if (funcFParamsNode != null) {
             funcFParamsNode.buildIR();
         }
         blockNode.buildIR();

@@ -9,6 +9,7 @@ import frontend.ir.llvm.value.instruction.other.ICmp;
 import frontend.ir.llvm.value.instruction.terminator.Br;
 import frontend.ir.llvm.value.type.ScalarValueType;
 import frontend.lexer.token.Token;
+import frontend.semantic.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -46,6 +47,8 @@ public class LAndExpNode extends Node {
             landExpNode.checkSemantic();
             eqExpNode.checkSemantic();
         }
+
+        loopDepth = SymbolTable.SYMBOL_TABLE.getLoopDepth();
     }
 
     public void buildIRForBranch(BasicBlock ifBasicBlock, BasicBlock elseBasicBlock) {
@@ -74,7 +77,7 @@ public class LAndExpNode extends Node {
             //<EqExp> {'||' <EqExp>}
             else {
                 //basic block for next EqExp node
-                BasicBlock basicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+                BasicBlock basicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), loopDepth);
                 IRBuilder.IR_BUILDER.addBasicBlock(basicBlock);
 
                 //value of EqExp node

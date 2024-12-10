@@ -4,6 +4,7 @@ import backend.AssemblyRecord;
 import config.Configuration;
 import error.ErrorHandler;
 import frontend.ir.llvm.value.Module;
+import optimize.assembly.GlobalVariableScoring;
 import optimize.assembly.GraphColoringRegisterAllocation;
 import optimize.assembly.PeepHole;
 import optimize.assembly.RemovePhi;
@@ -75,6 +76,8 @@ public class OptimizeManager {
 
             LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.init(module);
             LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.analyze();
+
+            GlobalVariableScoring.GLOBAL_VARIABLE_SCORING.analyze(module);
 
             GraphColoringRegisterAllocation.GRAPH_COLORING_REGISTER_ALLOCATION.init(module);
             GraphColoringRegisterAllocation.GRAPH_COLORING_REGISTER_ALLOCATION.optimize();
