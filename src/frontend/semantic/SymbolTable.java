@@ -89,6 +89,10 @@ public class SymbolTable {
         loopDepth--;
     }
 
+    public int getLoopDepth() {
+        return loopDepth;
+    }
+
     //add NumericalSymbol to symbolTable
     public void tackle(Token token, DataType type) {
         String name = token.getContent();

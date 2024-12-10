@@ -46,7 +46,7 @@ public class MainFuncDefNode extends Node {
         IRBuilder.IR_BUILDER.addFunction(new Function(IRBuilder.IR_BUILDER.getFunctionName(), intToken.getContent()));
 
         //add basic block
-        BasicBlock basicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+        BasicBlock basicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), 0);
         IRBuilder.IR_BUILDER.addBasicBlock(basicBlock);
         IRBuilder.IR_BUILDER.setCurrentBasicBlock(basicBlock);
 

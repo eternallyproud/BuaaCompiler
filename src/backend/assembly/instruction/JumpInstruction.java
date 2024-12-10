@@ -2,6 +2,8 @@ package backend.assembly.instruction;
 
 import backend.Register;
 
+import java.util.ArrayList;
+
 public class JumpInstruction extends Instruction {
     private enum JumpOperator {
         J, JR, JAL, UNDEFINED;
@@ -24,6 +26,9 @@ public class JumpInstruction extends Instruction {
     private final JumpOperator jumpOperator;
     private final String target;
 
+    private ArrayList<MemoryInstruction> swInstructions;
+    private ArrayList<MemoryInstruction> lwInstructions;
+
     public JumpInstruction(String operator, String target, Register rs) {
         this.jumpOperator = JumpOperator.getByString(operator);
         this.target = target;
@@ -36,6 +41,22 @@ public class JumpInstruction extends Instruction {
 
     public String getTarget(){
         return target;
+    }
+
+    public void setSwInstructions(ArrayList<MemoryInstruction> swInstructions){
+        this.swInstructions = swInstructions;
+    }
+
+    public ArrayList<MemoryInstruction> getSwInstructions() {
+        return swInstructions;
+    }
+
+    public void setLwInstructions(ArrayList<MemoryInstruction> lwInstructions){
+        this.lwInstructions = lwInstructions;
+    }
+
+    public ArrayList<MemoryInstruction> getLwInstructions(){
+        return lwInstructions;
     }
 
     @Override

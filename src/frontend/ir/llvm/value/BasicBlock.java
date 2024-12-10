@@ -30,8 +30,12 @@ public class BasicBlock extends Value {
     private ArrayList<Value> in;
     private ArrayList<Value> out;
 
-    public BasicBlock(String name) {
+    //global variable scoring
+    private final int loopDepth;
+
+    public BasicBlock(String name, int loopDepth) {
         super(OtherValueType.BASIC_BLOCK, name);
+        this.loopDepth = loopDepth;
         instructions = new ArrayList<>();
     }
 
@@ -227,6 +231,10 @@ public class BasicBlock extends Value {
 
     public ArrayList<Value> getOut() {
         return out;
+    }
+
+    public int getLoopDepth() {
+        return loopDepth;
     }
 
     @Override

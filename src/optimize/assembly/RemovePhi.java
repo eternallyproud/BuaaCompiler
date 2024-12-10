@@ -98,7 +98,7 @@ public class RemovePhi {
         }
         //has critical edges
         else {
-            BasicBlock newBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName());
+            BasicBlock newBasicBlock = new BasicBlock(IRBuilder.IR_BUILDER.getBasicBlockName(), predecessor.getLoopDepth());
             newBasicBlock.setFatherFunction(function);
             function.addBasicBlock(newBasicBlock);
 

@@ -9,11 +9,12 @@ import frontend.ir.llvm.value.global.Function;
 import frontend.ir.llvm.value.instruction.ConversionOperation;
 import frontend.ir.llvm.value.instruction.Instruction;
 import frontend.ir.llvm.value.instruction.optimize.Phi;
+import frontend.ir.llvm.value.instruction.other.Call;
 import utils.Tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.HashSet;
 
 public class GraphColoringRegisterAllocation {
     public final static GraphColoringRegisterAllocation GRAPH_COLORING_REGISTER_ALLOCATION = new GraphColoringRegisterAllocation();
@@ -25,10 +26,12 @@ public class GraphColoringRegisterAllocation {
     private GraphColoringRegisterAllocation() {
         registerPool = new ArrayList<>();
         for (Register register : Register.values()) {
-            if (register.ordinal() >= Register.T0.ordinal() && register.ordinal() <= Register.T7.ordinal()) {
+            if (register.ordinal() >= Register.T0.ordinal() && register.ordinal() <= Register.T9.ordinal()) {
                 registerPool.add(register);
             }
         }
+        registerPool.add(Register.GP);
+        registerPool.add(Register.FP);
     }
 
     public void init(Module module) {
@@ -53,7 +56,7 @@ public class GraphColoringRegisterAllocation {
 
         allocRegister(function.getBasicBlocks().get(0));
 
-        function.setValueToRegister(valueToRegister);
+        saveInfo(function);
     }
 
     private void allocRegister(BasicBlock basicBlock) {
@@ -84,12 +87,14 @@ public class GraphColoringRegisterAllocation {
             //alloc register for instruction
             if (instruction.usable() && !(instruction instanceof ConversionOperation conversionOperation && conversionOperation.isZext())) {
                 allocated.add(instruction);
-                Register reg = allocRegister();
-                if (registerToValue.containsKey(reg)) {
-                    valueToRegister.remove(registerToValue.get(reg));
+                Register reg = allocRegister(instruction);
+                if (reg != null) {
+                    if (registerToValue.containsKey(reg)) {
+                        valueToRegister.remove(registerToValue.get(reg));
+                    }
+                    registerToValue.put(reg, instruction);
+                    valueToRegister.put(instruction, reg);
                 }
-                registerToValue.put(reg, instruction);
-                valueToRegister.put(instruction, reg);
             }
         }
 
@@ -129,14 +134,54 @@ public class GraphColoringRegisterAllocation {
         }
     }
 
-    public Register allocRegister() {
+    public Register allocRegister(Instruction instruction) {
+        //if there exit a register that is not used, return it
         for (Register reg : registerPool) {
             if (!registerToValue.containsKey(reg)) {
                 return reg;
             }
         }
-        Random rand = new Random();
-        int randomIndex = rand.nextInt(registerPool.size());
-        return registerPool.get(randomIndex);
+
+        //else return the register containing the value with the lowest score
+        int lowestScore = Integer.MAX_VALUE;
+        Register allocatedRegister = null;
+        for (Register reg : registerPool) {
+            if (((Instruction) registerToValue.get(reg)).getScore() < lowestScore) {
+                lowestScore = ((Instruction) registerToValue.get(reg)).getScore();
+                allocatedRegister = reg;
+            }
+        }
+        if (instruction.getScore() < lowestScore) {
+            return null;
+        }
+        return allocatedRegister;
+    }
+
+    private void saveInfo(Function function) {
+        function.setValueToRegister(valueToRegister);
+
+        for (BasicBlock basicBlock : function.getBasicBlocks()) {
+            for (Instruction instruction : basicBlock.getInstructions()) {
+                if (instruction instanceof Call call) {
+                    HashSet<Register> activeRegisters = new HashSet<>();
+                    //values that are used in future basic blocks
+                    for (Value value : basicBlock.getOut()) {
+                        if (valueToRegister.containsKey(value)) {
+                            activeRegisters.add(valueToRegister.get(value));
+                        }
+                    }
+                    //values that are used in the future instructions of the current basic block
+                    ArrayList<Instruction> instructions = basicBlock.getInstructions();
+                    for (int i = instructions.indexOf(call) + 1; i < instructions.size(); i++) {
+                        for (Value value : instructions.get(i).getUsedValueList()) {
+                            if (valueToRegister.containsKey(value)) {
+                                activeRegisters.add(valueToRegister.get(value));
+                            }
+                        }
+                    }
+                    call.setActiveRegisters(activeRegisters);
+                }
+            }
+        }
     }
 }
