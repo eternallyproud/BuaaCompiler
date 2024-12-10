@@ -1,6 +1,7 @@
 package optimize.assembly;
 
 import backend.AssemblyRecord;
+import backend.Register;
 import backend.assembly.Assembly;
 import backend.assembly.Label;
 import backend.assembly.instruction.JumpInstruction;
@@ -29,12 +30,13 @@ public class PeepHole {
     }
 
     private void optimize() {
-        deleteJumpInstruction();
-        deleteMemoryInstruction();
-        deleteMove();
+        removeRedundantJumpInstruction();
+        removeRedundantMemoryInstruction();
+        removeRedundantMove();
+        removeRedundantSw();
     }
 
-    private void deleteJumpInstruction() {
+    private void removeRedundantJumpInstruction() {
         // j label -> delete
         // label:
         ArrayList<Assembly> textSegment = record.getTextSegment();
@@ -48,7 +50,7 @@ public class PeepHole {
         }
     }
 
-    private void deleteMemoryInstruction() {
+    private void removeRedundantMemoryInstruction() {
         // sw $t0, 0($t1)
         // lw $t2, 0($t1) -> move $t2, $t0
         ArrayList<Assembly> textSegment = record.getTextSegment();
@@ -65,8 +67,7 @@ public class PeepHole {
         }
     }
 
-    private void deleteMove() {
-
+    private void removeRedundantMove() {
         // move $t0, $t0 -> delete
         ArrayList<Assembly> textSegment = record.getTextSegment();
         for (Assembly assembly : textSegment) {
@@ -107,7 +108,29 @@ public class PeepHole {
                     }
                 }
             }
-        }while (hasChanged);
+        } while (hasChanged);
     }
 
+    private void removeRedundantSw() {
+        ArrayList<Assembly> textSegment = new ArrayList<>(record.getTextSegment());
+        for (Assembly assembly : textSegment) {
+            if (assembly instanceof JumpInstruction jumpInstruction && jumpInstruction.getOperator().equals("jal")) {
+                for (MemoryInstruction lw : jumpInstruction.getLwInstructions()) {
+                    if (!textSegment.contains(lw)) {
+                        Register rt = lw.getRt();
+                        MemoryInstruction redundantSw = null;
+                        for (MemoryInstruction sw : jumpInstruction.getSwInstructions()) {
+                            if (sw.getRt() == rt) {
+                                redundantSw = sw;
+                                break;
+                            }
+                        }
+                        if (redundantSw != null) {
+                            record.removeFromText(redundantSw);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
