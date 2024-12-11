@@ -53,6 +53,14 @@ public class Value {
         return userList;
     }
 
+    public ArrayList<User> getUsers() {
+        ArrayList<User> users = new ArrayList<>();
+        for (Use use : userList) {
+            users.add(use.getUser());
+        }
+        return users;
+    }
+
     public Value convertTo(ValueType expectedValueType) {
         if ((expectedValueType instanceof ScalarValueType) && (!this.valueType.equals(expectedValueType))) {
             ConversionOperation conversionOperation = new ConversionOperation(expectedValueType, IRBuilder.IR_BUILDER.getLocalVarName(), this);

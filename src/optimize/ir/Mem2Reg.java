@@ -5,7 +5,7 @@ import frontend.ir.IRBuilder;
 import frontend.ir.llvm.value.BasicBlock;
 import frontend.ir.llvm.value.Constant;
 import frontend.ir.llvm.value.Module;
-import frontend.ir.llvm.value.Use;
+import frontend.ir.llvm.value.User;
 import frontend.ir.llvm.value.Value;
 import frontend.ir.llvm.value.global.Function;
 import frontend.ir.llvm.value.instruction.Instruction;
@@ -53,13 +53,13 @@ public class Mem2Reg {
         defInstructions = new ArrayList<>();
         useInstructions = new ArrayList<>();
 
-        for (Use use : instruction.getUserList()) {
-            if (use.getUser() instanceof Store store) {
+        for (User user : instruction.getUsers()) {
+            if (user instanceof Store store) {
                 defInstructions.add(store);
                 if (!defBasicBlocks.contains(store.getFatherBasicBlock())) {
                     defBasicBlocks.add(store.getFatherBasicBlock());
                 }
-            } else if (use.getUser() instanceof Load load) {
+            } else if (user instanceof Load load) {
                 useInstructions.add(load);
             }
         }

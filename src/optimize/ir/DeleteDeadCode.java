@@ -39,14 +39,19 @@ public class DeleteDeadCode {
     }
 
     public void optimize(BasicBlock basicBlock) {
-        ArrayList<Instruction> instructions = new ArrayList<>(basicBlock.getInstructions());
-        for (Instruction instruction : instructions) {
-            if (instruction.disposable() && instruction.getUserList().isEmpty()) {
-                //remove the instruction
-                basicBlock.removeInstruction(instruction);
-                instruction.removeAllUse();
-                hasChange = true;
+        boolean changed;
+        do {
+            changed = false;
+            ArrayList<Instruction> instructions = new ArrayList<>(basicBlock.getInstructions());
+            for (Instruction instruction : instructions) {
+                if (instruction.disposable() && instruction.getUserList().isEmpty()) {
+                    //remove the instruction
+                    basicBlock.removeInstruction(instruction);
+                    instruction.removeAllUse();
+                    hasChange = true;
+                    changed = true;
+                }
             }
-        }
+        } while (changed);
     }
 }

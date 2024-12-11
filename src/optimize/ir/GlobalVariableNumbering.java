@@ -18,8 +18,8 @@ import java.util.HashMap;
 public class GlobalVariableNumbering {
     public final static GlobalVariableNumbering GLOBAL_VARIABLE_NUMBERING = new GlobalVariableNumbering();
 
-    private boolean hasChanged;
     private Module module;
+    private boolean hasChanged;
 
     private GlobalVariableNumbering() {
     }

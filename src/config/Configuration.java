@@ -50,6 +50,8 @@ public class Configuration {
     public static boolean CONSTANT_FOLDING_OPTIMIZATION = true;
     // 全局变量编号优化
     public static boolean GLOBAL_VARIABLE_NUMBERING_OPTIMIZATION = true;
+    // 全局代码移动优化
+    public static boolean GLOBAL_CODE_MOTION_OPTIMIZATION = true;
     // 多余指令移除优化
     public static boolean REMOVE_REDUNDANT_INSTRUCTION_OPTIMIZATION = true;
     // 图着色寄存器分配优化

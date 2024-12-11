@@ -28,9 +28,7 @@ public class Dominance {
     public void build() {
         for (Function function : module.getFunctions()) {
             buildDominance(function);
-
             buildImmediateDominance(function);
-
             buildDominanceFrontier(function);
         }
     }
@@ -81,6 +79,15 @@ public class Dominance {
         for (BasicBlock basicBlock : function.getBasicBlocks()) {
             basicBlock.setFather(father.get(basicBlock));
             basicBlock.setSon(son.get(basicBlock));
+        }
+
+        buildGeneration(function.getBasicBlocks().get(0), 0);
+    }
+
+    private void buildGeneration(BasicBlock root, int generation) {
+        root.setGeneration(generation);
+        for (BasicBlock son : root.getSon()) {
+            buildGeneration(son, generation + 1);
         }
     }
 

@@ -24,6 +24,7 @@ public class Function extends GlobalValue {
     private final ArrayList<BasicBlock> basicBlocks;
     private HashMap<Value, Register> valueToRegister;
     private Boolean canBeNumbered;
+    private Boolean hasSideEffect;
 
     public Function(String name, String cType) {
         super(ScalarValueType.getByCType(cType), name);
@@ -101,6 +102,14 @@ public class Function extends GlobalValue {
 
     public void clear(){
         canBeNumbered = null;
+    }
+
+    public void setHasSideEffect(Boolean hasSideEffect) {
+        this.hasSideEffect = hasSideEffect;
+    }
+
+    public Boolean hasSideEffect() {
+        return hasSideEffect;
     }
 
     @Override

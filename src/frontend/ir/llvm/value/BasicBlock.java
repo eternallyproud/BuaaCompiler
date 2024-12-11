@@ -22,6 +22,7 @@ public class BasicBlock extends Value {
     private ArrayList<BasicBlock> dominated;
     private BasicBlock father;
     private ArrayList<BasicBlock> son;
+    private Integer generation;
     private ArrayList<BasicBlock> dominanceFrontier;
 
     //Live Variable Analysis
@@ -64,6 +65,10 @@ public class BasicBlock extends Value {
         instructions.add(instructions.size() - 1, instruction);
     }
 
+    public void addBefore(Instruction preInstruction, Instruction instruction) {
+        instructions.add(instructions.indexOf(preInstruction), instruction);
+    }
+
     public void removeInstruction(Instruction instruction) {
         instructions.remove(instruction);
     }
@@ -93,7 +98,7 @@ public class BasicBlock extends Value {
     }
 
     public void updatePredecessors(BasicBlock oldPredecessor, BasicBlock newPredecessor) {
-        if( predecessors.contains(newPredecessor)) {
+        if (predecessors.contains(newPredecessor)) {
             predecessors.remove(oldPredecessor);
             return;
         }
@@ -106,7 +111,7 @@ public class BasicBlock extends Value {
 
     public void updatePredecessors(BasicBlock oldPredecessor, ArrayList<BasicBlock> newPredecessors) {
         predecessors.remove(oldPredecessor);
-        for(BasicBlock basicBlock : newPredecessors) {
+        for (BasicBlock basicBlock : newPredecessors) {
             if (!predecessors.contains(basicBlock)) {
                 predecessors.add(basicBlock);
             }
@@ -126,7 +131,7 @@ public class BasicBlock extends Value {
     }
 
     public void updateSuccessors(BasicBlock oldSuccessor, BasicBlock newSuccessor) {
-        if( successors.contains(newSuccessor)) {
+        if (successors.contains(newSuccessor)) {
             successors.remove(oldSuccessor);
             return;
         }
@@ -183,6 +188,21 @@ public class BasicBlock extends Value {
 
     public ArrayList<BasicBlock> getSon() {
         return son;
+    }
+
+    public void getPostOrderOfDominanceTree(ArrayList<BasicBlock> basicBlocks) {
+        for (BasicBlock basicBlock : son) {
+            basicBlock.getPostOrderOfDominanceTree(basicBlocks);
+        }
+        basicBlocks.add(this);
+    }
+
+    public void setGeneration(int generation){
+        this.generation = generation;
+    }
+
+    public int getGeneration(){
+        return generation;
     }
 
     public void setDominanceFrontier(ArrayList<BasicBlock> dominanceFrontier) {

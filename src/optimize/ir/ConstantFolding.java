@@ -7,6 +7,7 @@ import frontend.ir.llvm.value.Module;
 import frontend.ir.llvm.value.Value;
 import frontend.ir.llvm.value.global.Function;
 import frontend.ir.llvm.value.instruction.BinaryOperation;
+import frontend.ir.llvm.value.instruction.ConversionOperation;
 import frontend.ir.llvm.value.instruction.Instruction;
 import frontend.ir.llvm.value.instruction.other.ICmp;
 import utils.Tools;
@@ -50,6 +51,8 @@ public class ConstantFolding {
                 handleBinaryOperation(binaryOperation);
             } else if (instruction instanceof ICmp icmp) {
                 handleICmp(icmp);
+            }else if(instruction instanceof ConversionOperation conversionOperation){
+                handleConversionOperation(conversionOperation);
             }
         }
     }
@@ -73,6 +76,7 @@ public class ConstantFolding {
             Constant constant = new Constant.Int(ans);
 
             binaryOperation.updateAllUsers(constant);
+            binaryOperation.removeAllUse();
             binaryOperation.getFatherBasicBlock().removeInstruction(binaryOperation);
             hasChanged = true;
 
@@ -80,6 +84,7 @@ public class ConstantFolding {
             Value newValue = getNewValue(operator, Integer.parseInt(constant.getName()), operandValue2);
             if (newValue != null) {
                 binaryOperation.updateAllUsers(newValue);
+                binaryOperation.removeAllUse();
                 binaryOperation.getFatherBasicBlock().removeInstruction(binaryOperation);
                 hasChanged = true;
             }
@@ -87,6 +92,7 @@ public class ConstantFolding {
             Value newValue = getNewValue(operator, operandValue1, Integer.parseInt(constant.getName()));
             if (newValue != null) {
                 binaryOperation.updateAllUsers(newValue);
+                binaryOperation.removeAllUse();
                 binaryOperation.getFatherBasicBlock().removeInstruction(binaryOperation);
                 hasChanged = true;
             }
@@ -156,9 +162,21 @@ public class ConstantFolding {
             Constant constant = new Constant.Bool(ans);
 
             iCmp.updateAllUsers(constant);
+            iCmp.removeAllUse();
             iCmp.getFatherBasicBlock().removeInstruction(iCmp);
             hasChanged = true;
+        }
+    }
 
+    private void handleConversionOperation(ConversionOperation conversionOperation) {
+        Value operandValue = conversionOperation.getUsedValue(0);
+        if (operandValue instanceof Constant constant) {
+            Constant newConstant = (Constant) constant.convertTo(conversionOperation.getValueType());
+
+            conversionOperation.updateAllUsers(newConstant);
+            conversionOperation.removeAllUse();
+            conversionOperation.getFatherBasicBlock().removeInstruction(conversionOperation);
+            hasChanged = true;
         }
     }
 }

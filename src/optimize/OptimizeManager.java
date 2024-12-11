@@ -13,6 +13,8 @@ import optimize.ir.ControlFlowGraph;
 import optimize.ir.DeleteDeadCode;
 import optimize.ir.Dominance;
 import optimize.assembly.LiveVariableAnalysis;
+import optimize.ir.FunctionSideEffectAnalysis;
+import optimize.ir.GlobalCodeMotion;
 import optimize.ir.GlobalVariableNumbering;
 import optimize.ir.Mem2Reg;
 import optimize.ir.RemoveRedundantInstruction;
@@ -40,17 +42,21 @@ public class OptimizeManager {
             RemoveUnreachableBasicBlock.REMOVE_UNREACHABLE_BASIC_BLOCK.optimize(module);
             Dominance.DOMINANCE.build(module);
             Mem2Reg.MEM2REG.optimize(module);
+            FunctionSideEffectAnalysis.FUNCTION_SIDE_EFFECT_ANALYSIS.analyze(module);
             DeleteDeadCode.DELETE_DEAD_CODE.optimize(module);
+            GlobalCodeMotion.GLOBAL_CODE_MOTION.optimize(module);
             GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize(module);
             ConstantFolding.CONSTANT_FOLDING.optimize(module);
             RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize(module);
 
             boolean hasChanged = true;
             while (hasChanged && Configuration.MULTI_ROUND_OPTIMIZATION) {
+                FunctionSideEffectAnalysis.FUNCTION_SIDE_EFFECT_ANALYSIS.analyze();
                 hasChanged = false;
                 module.clear();
 
                 if (DeleteDeadCode.DELETE_DEAD_CODE.optimize()) hasChanged = true;
+                if (GlobalCodeMotion.GLOBAL_CODE_MOTION.optimize()) hasChanged = true;
                 if (GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize()) hasChanged = true;
                 if (ConstantFolding.CONSTANT_FOLDING.optimize()) hasChanged = true;
                 if (RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize()) hasChanged = true;
@@ -94,8 +100,6 @@ public class OptimizeManager {
             Tools.printFailMessage("汇编代码优化");
         } else {
             Tools.printStartMessage("汇编代码优化");
-
-            System.out.print(record);
 
             PeepHole.PEEP_HOLE.optimize(record);
 

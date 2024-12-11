@@ -22,6 +22,26 @@ public class Phi extends Instruction {
         addUsed(label);
     }
 
+    public ArrayList<BasicBlock> getBasicBlocks() {
+        ArrayList<BasicBlock> basicBlocks = new ArrayList<>();
+
+        for (int i = 1; i < usedList.size(); i += 2) {
+            basicBlocks.add((BasicBlock) getUsedValue(i));
+        }
+
+        return basicBlocks;
+    }
+
+    public ArrayList<Value> getValues() {
+        ArrayList<Value> values = new ArrayList<>();
+
+        for (int i = 0; i < usedList.size(); i += 2) {
+            values.add(getUsedValue(i));
+        }
+
+        return values;
+    }
+
     public void updateBasicBlock(BasicBlock oldBasicBlock, BasicBlock newBasicBlock) {
         int oldIndex = getIndexOfUsedValue(oldBasicBlock);
         int newIndex = getIndexOfUsedValue(newBasicBlock);
@@ -56,11 +76,7 @@ public class Phi extends Instruction {
 
     @Override
     public String toString() {
-        ArrayList<Value> basicBlocks = new ArrayList<>();
-
-        for (int i = 1; i < usedList.size(); i += 2) {
-            basicBlocks.add(getUsedValue(i));
-        }
+        ArrayList<BasicBlock> basicBlocks = getBasicBlocks();
 
         String sb = basicBlocks.stream()
                 .map(basicBlock -> "[ " + getUsedValue(basicBlocks.indexOf(basicBlock) * 2).getName() + ", %" + basicBlock.getName() + " ]")
