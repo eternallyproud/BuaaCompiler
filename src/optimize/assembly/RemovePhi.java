@@ -21,17 +21,11 @@ import java.util.List;
 
 public class RemovePhi {
     public final static RemovePhi REMOVE_PHI = new RemovePhi();
-    private Module module;
 
     private RemovePhi() {
     }
 
-    public void init(Module module) {
-        this.module = module;
-    }
-
-
-    public void build() {
+    public void build(Module module) {
         if (Configuration.MEM2REG_OPTIMIZATION) {
             Tools.printStartMessage("Phi指令移除");
 

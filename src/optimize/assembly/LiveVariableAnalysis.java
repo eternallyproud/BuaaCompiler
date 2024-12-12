@@ -12,16 +12,11 @@ import java.util.HashSet;
 
 public class LiveVariableAnalysis {
     public final static LiveVariableAnalysis LIVE_VARIABLE_ANALYSIS = new LiveVariableAnalysis();
-    private Module module;
 
     private LiveVariableAnalysis() {
     }
 
-    public void init(Module module) {
-        this.module = module;
-    }
-
-    public void analyze() {
+    public void analyze(Module module) {
         Tools.printStartMessage("活跃变量分析");
 
         for (Function function : module.getFunctions()) {
@@ -55,7 +50,7 @@ public class LiveVariableAnalysis {
                 HashSet<Value> newIn = new HashSet<>(outMap.get(basicBlock));
                 basicBlock.getDef().forEach(newIn::remove);
                 newIn.addAll(basicBlock.getUse());
-                if(!newIn.equals(inMap.get(basicBlock))) {
+                if (!newIn.equals(inMap.get(basicBlock))) {
                     inMap.put(basicBlock, newIn);
                     hasUpdate = true;
                 }

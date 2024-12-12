@@ -17,6 +17,7 @@ import optimize.ir.FunctionSideEffectAnalysis;
 import optimize.ir.GlobalCodeMotion;
 import optimize.ir.GlobalVariableNumbering;
 import optimize.ir.Mem2Reg;
+import optimize.ir.RemoveAllConversionInstruction;
 import optimize.ir.RemoveRedundantInstruction;
 import optimize.ir.RemoveUnreachableBasicBlock;
 import optimize.ir.RemoveUnreachableInstruction;
@@ -80,16 +81,11 @@ public class OptimizeManager {
         } else {
             Tools.printStartMessage("汇编前优化");
 
-            LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.init(module);
-            LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.analyze();
-
+            RemoveAllConversionInstruction.REMOVE_ALL_CONVERSION_INSTRUCTION.optimize(module);
+            LiveVariableAnalysis.LIVE_VARIABLE_ANALYSIS.analyze(module);
             GlobalVariableScoring.GLOBAL_VARIABLE_SCORING.analyze(module);
-
-            GraphColoringRegisterAllocation.GRAPH_COLORING_REGISTER_ALLOCATION.init(module);
-            GraphColoringRegisterAllocation.GRAPH_COLORING_REGISTER_ALLOCATION.optimize();
-
-            RemovePhi.REMOVE_PHI.init(module);
-            RemovePhi.REMOVE_PHI.build();
+            GraphColoringRegisterAllocation.GRAPH_COLORING_REGISTER_ALLOCATION.optimize(module);
+            RemovePhi.REMOVE_PHI.build(module);
 
             Tools.printEndMessage("汇编前优化");
         }

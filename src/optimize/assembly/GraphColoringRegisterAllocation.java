@@ -18,7 +18,7 @@ import java.util.HashSet;
 
 public class GraphColoringRegisterAllocation {
     public final static GraphColoringRegisterAllocation GRAPH_COLORING_REGISTER_ALLOCATION = new GraphColoringRegisterAllocation();
-    private Module module;
+
     private HashMap<Value, Register> valueToRegister;
     private HashMap<Register, Value> registerToValue;
     private final ArrayList<Register> registerPool;
@@ -34,11 +34,7 @@ public class GraphColoringRegisterAllocation {
         registerPool.add(Register.FP);
     }
 
-    public void init(Module module) {
-        this.module = module;
-    }
-
-    public void optimize() {
+    public void optimize(Module module) {
         if (Configuration.GRAPH_COLORING_REGISTER_ALLOCATION_OPTIMIZATION) {
             Tools.printOpenInfo("图着色寄存器分配优化");
 
