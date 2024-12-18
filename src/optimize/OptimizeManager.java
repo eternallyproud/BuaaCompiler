@@ -17,7 +17,8 @@ import optimize.ir.FunctionSideEffectAnalysis;
 import optimize.ir.GlobalCodeMotion;
 import optimize.ir.GlobalVariableNumbering;
 import optimize.ir.Mem2Reg;
-import optimize.ir.RemoveAllConversionInstruction;
+import optimize.assembly.RemoveAllConversionInstruction;
+import optimize.ir.MemoryInstructionSimplify;
 import optimize.ir.RemoveRedundantInstruction;
 import optimize.ir.RemoveUnreachableBasicBlock;
 import optimize.ir.RemoveUnreachableInstruction;
@@ -49,6 +50,7 @@ public class OptimizeManager {
             GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize(module);
             ConstantFolding.CONSTANT_FOLDING.optimize(module);
             RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize(module);
+            MemoryInstructionSimplify.MEMORY_INSTRUCTION_SIMPLIFY.optimize(module);
 
             boolean hasChanged = true;
             while (hasChanged && Configuration.MULTI_ROUND_OPTIMIZATION) {
@@ -61,6 +63,7 @@ public class OptimizeManager {
                 if (GlobalVariableNumbering.GLOBAL_VARIABLE_NUMBERING.optimize()) hasChanged = true;
                 if (ConstantFolding.CONSTANT_FOLDING.optimize()) hasChanged = true;
                 if (RemoveRedundantInstruction.REMOVE_REDUNDANT_INSTRUCTION.optimize()) hasChanged = true;
+                if (MemoryInstructionSimplify.MEMORY_INSTRUCTION_SIMPLIFY.optimize()) hasChanged = true;
             }
 
             ControlFlowGraph.CONTROL_FLOW_GRAPH.build();

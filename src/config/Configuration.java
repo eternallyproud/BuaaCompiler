@@ -54,6 +54,8 @@ public class Configuration {
     public static boolean GLOBAL_CODE_MOTION_OPTIMIZATION = true;
     // 多余指令移除优化
     public static boolean REMOVE_REDUNDANT_INSTRUCTION_OPTIMIZATION = true;
+    // 内存指令简化优化
+    public static boolean MEMORY_INSTRUCTION_SIMPLIFY_OPTIMIZATION = true;
     // 移除全部类型转换指令优化
     public static boolean REMOVE_ALL_CONVERSION_INSTRUCTION_OPTIMIZATION = true;
     // 图着色寄存器分配优化

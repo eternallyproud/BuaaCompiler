@@ -1,4 +1,4 @@
-package optimize.ir;
+package optimize.assembly;
 
 import config.Configuration;
 import frontend.ir.llvm.value.BasicBlock;
