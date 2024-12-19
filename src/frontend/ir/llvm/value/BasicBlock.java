@@ -73,6 +73,10 @@ public class BasicBlock extends Value {
         instructions.remove(instruction);
     }
 
+    public void updateInstruction(Instruction oldInstruction, Instruction newInstruction) {
+        instructions.set(instructions.indexOf(oldInstruction), newInstruction);
+    }
+
     public Instruction getLastInstruction() {
         return instructions.get(instructions.size() - 1);
     }

@@ -68,7 +68,7 @@ public class VarDefNode extends Node {
 
             //global variable
             String name = IRBuilder.IR_BUILDER.getGlobalVarName();
-            GlobalVariable globalVariable = new GlobalVariable(name, valueType, initializer);
+            GlobalVariable globalVariable = new GlobalVariable(name, valueType, initializer, false);
 
             //add to ir builder
             IRBuilder.IR_BUILDER.addGlobalVariable(globalVariable);

@@ -74,7 +74,7 @@ public class ConstDefNode extends Node {
 
                 //global variable
                 String name = IRBuilder.IR_BUILDER.getGlobalVarName();
-                GlobalVariable globalVariable = new GlobalVariable(name, valueType, initializer);
+                GlobalVariable globalVariable = new GlobalVariable(name, valueType, initializer, true);
 
                 //add to ir builder
                 IRBuilder.IR_BUILDER.addGlobalVariable(globalVariable);
@@ -87,8 +87,11 @@ public class ConstDefNode extends Node {
                 //element type
                 ScalarValueType elementValueType = (ScalarValueType) valueType.getArrayElementValueType();
 
+                //initializer
+                Initializer initializer = new Initializer(elementNumber, valueType, values);
+
                 //alloca
-                Alloca alloca = new Alloca(IRBuilder.IR_BUILDER.getLocalVarName(), valueType);
+                Alloca alloca = new Alloca(IRBuilder.IR_BUILDER.getLocalVarName(), valueType, initializer);
                 IRBuilder.IR_BUILDER.addInstruction(alloca);
 
                 int valueNum = values == null ? 0 : values.size();

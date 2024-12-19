@@ -89,7 +89,7 @@ public class Function extends GlobalValue {
                     return canBeNumbered;
                 }
                 for (Value operand : instruction.getUsedValueList()) {
-                    if (operand instanceof GlobalValue) {
+                    if (operand instanceof GlobalVariable globalVariable && !globalVariable.isConstant()) {
                         canBeNumbered = false;
                         return canBeNumbered;
                     }

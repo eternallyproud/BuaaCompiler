@@ -9,12 +9,14 @@ import frontend.ir.llvm.value.type.ValueType;
 public class GlobalVariable extends GlobalValue {
 
     private final Initializer initializer;
+    private final boolean isConstant;
 
     //LLVM 内的 GlobalVariable 其实是指针类型，指向一块内存区域
     //详见 https://evian-zhang.github.io/llvm-ir-tutorial/ 3.3
-    public GlobalVariable(String name, ValueType referencedType, Initializer initializer) {
+    public GlobalVariable(String name, ValueType referencedType, Initializer initializer, boolean isConstant) {
         super(new PointerValueType(referencedType), name);
         this.initializer = initializer;
+        this.isConstant = isConstant;
     }
 
     public int getInitialValue(int index) {
@@ -22,6 +24,10 @@ public class GlobalVariable extends GlobalValue {
             return 0;
         }
         return initializer.getValues().get(index);
+    }
+
+    public boolean isConstant() {
+        return isConstant;
     }
 
     @Override

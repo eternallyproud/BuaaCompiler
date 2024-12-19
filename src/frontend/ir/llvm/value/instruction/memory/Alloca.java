@@ -4,14 +4,33 @@ import backend.AssemblyBuilder;
 import backend.Register;
 import backend.assembly.instruction.ComputationalInstruction;
 import backend.assembly.instruction.MemoryInstruction;
+import frontend.ir.llvm.value.initializer.Initializer;
 import frontend.ir.llvm.value.type.ArrayValueType;
 import frontend.ir.llvm.value.type.PointerValueType;
 import frontend.ir.llvm.value.type.ValueType;
 
 //<result> = alloca <type>
 public class Alloca extends MemoryOperation {
+    private Initializer initializer = null;
+
     public Alloca(String name, ValueType referencedType) {
         super(new PointerValueType(referencedType), name);
+    }
+
+    public Alloca(String name, ValueType referencedType, Initializer initializer) {
+        super(new PointerValueType(referencedType), name);
+        this.initializer = initializer;
+    }
+
+    public boolean isConstant(){
+        return initializer!=null;
+    }
+
+    public int getInitialValue(int index) {
+        if (index > initializer.getValues().size() - 1) {
+            return 0;
+        }
+        return initializer.getValues().get(index);
     }
 
     @Override
