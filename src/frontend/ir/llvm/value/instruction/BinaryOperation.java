@@ -5,7 +5,6 @@ import backend.Register;
 import backend.assembly.Assembly;
 import backend.assembly.instruction.ComputationalInstruction;
 import backend.assembly.instruction.MoveInstruction;
-import frontend.ir.llvm.value.Constant;
 import frontend.ir.llvm.value.Value;
 import frontend.ir.llvm.value.type.ScalarValueType;
 
@@ -49,10 +48,6 @@ public class BinaryOperation extends Instruction {
         return operator.getString();
     }
 
-    private static boolean isPowerOfTwo(int n) {
-        return (n & (n - 1)) == 0;
-    }
-
     @Override
     public String hash() {
         return operator.toString().toLowerCase() + " " + getUsedValue(0).getName() + " " + getUsedValue(1).getName();
@@ -66,24 +61,6 @@ public class BinaryOperation extends Instruction {
         Register rd = AssemblyBuilder.ASSEMBLY_BUILDER.getRegisterOfValue(this);
         if (rd == null) {
             rd = Register.K0;
-        }
-
-        //optimize mult
-        if (operator == BinaryOperator.MUL) {
-            if (getUsedValue(0) instanceof Constant constant && isPowerOfTwo(Integer.parseInt(constant.getName()))) {
-                int power = Integer.bitCount(Integer.parseInt(constant.getName()) - 1);
-                Register rt = Assembly.moveScalarValueToRegisterIfNotMapped(getUsedValue(1), Register.K1);
-                ComputationalInstruction sll = new ComputationalInstruction("sll", rd, rt, power);
-                AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sll);
-                return;
-            }
-            if (getUsedValue(1) instanceof Constant constant && isPowerOfTwo(Integer.parseInt(constant.getName()))) {
-                int power = Integer.bitCount(Integer.parseInt(constant.getName()) - 1);
-                Register rs = Assembly.moveScalarValueToRegisterIfNotMapped(getUsedValue(0), Register.K0);
-                ComputationalInstruction sll = new ComputationalInstruction("sll", rd, rs, power);
-                AssemblyBuilder.ASSEMBLY_BUILDER.addToText(sll);
-                return;
-            }
         }
 
         //rs rt

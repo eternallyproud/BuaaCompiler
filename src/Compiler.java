@@ -4,7 +4,6 @@ import frontend.lexer.Lexer;
 import frontend.parser.Parser;
 import frontend.ir.IRBuilder;
 import frontend.semantic.SymbolTable;
-import optimize.OptimizeManager;
 import utils.InOut;
 
 public class Compiler {
@@ -33,15 +32,15 @@ public class Compiler {
         IRBuilder.IR_BUILDER.writeIR();
 
         // optimize
-        OptimizeManager.OPTIMIZE_MANAGER.init(IRBuilder.IR_BUILDER.getModule());
-        OptimizeManager.OPTIMIZE_MANAGER.optimizeIR();
-        OptimizeManager.OPTIMIZE_MANAGER.writeOptimizedIR();
-        OptimizeManager.OPTIMIZE_MANAGER.optimizeAssembly();
+        // OptimizeManager.OPTIMIZE_MANAGER.init(IRBuilder.IR_BUILDER.getModule());
+        // OptimizeManager.OPTIMIZE_MANAGER.optimizeIR();
+        // OptimizeManager.OPTIMIZE_MANAGER.writeOptimizedIR();
+        // OptimizeManager.OPTIMIZE_MANAGER.optimizeAssembly();
 
         // assembly
         AssemblyBuilder.ASSEMBLY_BUILDER.init(IRBuilder.IR_BUILDER.getModule());
         AssemblyBuilder.ASSEMBLY_BUILDER.buildAssembly();
-        AssemblyBuilder.ASSEMBLY_BUILDER.optimize();
+        // AssemblyBuilder.ASSEMBLY_BUILDER.optimize();
         AssemblyBuilder.ASSEMBLY_BUILDER.writeAssembly();
 
         // checker
